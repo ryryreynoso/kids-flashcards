@@ -5,9 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kids Flashcard Fun!</title>
     
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <!-- Firebase SDK - Modular -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js';
+        import { getDatabase, ref, set, onValue } from 'https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js';
+        
+        // Make Firebase functions available globally
+        window.firebaseApp = null;
+        window.firebaseDatabase = null;
+        window.firebaseRef = ref;
+        window.firebaseSet = set;
+        window.firebaseOnValue = onValue;
+        window.initializeApp = initializeApp;
+        window.getDatabase = getDatabase;
+        window.firebaseReady = true;
+    </script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Chewy&display=swap');
@@ -825,23 +837,40 @@
         
         // Initialize Firebase
         let database;
-        try {
-            firebase.initializeApp(firebaseConfig);
-            database = firebase.database();
-            console.log('Firebase initialized successfully');
-        } catch (error) {
-            console.error('Firebase initialization error:', error);
-        }
+        let isFirebaseReady = false;
         
-        // Load categories from Firebase on startup
-        function loadCategoriesFromStorage() {
-            if (!database) {
-                console.error('Firebase not initialized');
+        // Wait for Firebase modules to load
+        function initFirebase() {
+            if (typeof window.initializeApp === 'undefined') {
+                console.log('Waiting for Firebase to load...');
+                setTimeout(initFirebase, 100);
                 return;
             }
             
-            const categoriesRef = database.ref('flashcard-categories');
-            categoriesRef.on('value', (snapshot) => {
+            try {
+                const app = window.initializeApp(firebaseConfig);
+                database = window.getDatabase(app);
+                isFirebaseReady = true;
+                console.log('Firebase initialized successfully');
+                // Load categories after Firebase is ready
+                loadCategoriesFromStorage();
+            } catch (error) {
+                console.error('Firebase initialization error:', error);
+            }
+        }
+        
+        // Start Firebase initialization
+        initFirebase();
+        
+        // Load categories from Firebase on startup
+        function loadCategoriesFromStorage() {
+            if (!isFirebaseReady || !database) {
+                console.error('Firebase not ready');
+                return;
+            }
+            
+            const categoriesRef = window.firebaseRef(database, 'flashcard-categories');
+            window.firebaseOnValue(categoriesRef, (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
                     customCategories = data;
@@ -859,14 +888,15 @@
         
         // Save categories to Firebase (shared across all users)
         async function saveCategoriesToStorage() {
-            if (!database) {
+            if (!isFirebaseReady || !database) {
                 console.error('Firebase not initialized');
-                alert('Firebase is not configured. Please add your Firebase credentials.');
+                alert('Firebase is not configured. Please check console for errors.');
                 return;
             }
             
             try {
-                await database.ref('flashcard-categories').set(customCategories);
+                const categoriesRef = window.firebaseRef(database, 'flashcard-categories');
+                await window.firebaseSet(categoriesRef, customCategories);
                 console.log('Categories saved to Firebase');
             } catch (error) {
                 console.error('Error saving categories:', error);
@@ -1635,7 +1665,7 @@
         createStars();
         selectRandomCards();
         showSetupScreen();
-        loadCategoriesFromStorage();
+        // loadCategoriesFromStorage is called automatically when Firebase is ready
     </script>
 </body>
 </html>
