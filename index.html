@@ -184,18 +184,7 @@
         
         /* Label outside card for photos */
         .card-external-label {
-            font-size: 13px;
-            text-align: center;
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 8px 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
-            word-wrap: break-word;
-            transition: all 0.3s;
-            max-width: 280px;
-            box-sizing: border-box;
+            display: none; /* Hidden - no labels shown for custom photos */
         }
         
         @media (max-width: 1024px) {
@@ -1412,72 +1401,9 @@
                             imgDiv.remove();
                         };
                         
-                        const labelDiv = document.createElement('div');
-                        labelDiv.className = 'image-label-edit';
-                        labelDiv.style.cssText = 'font-size: 13px; text-align: center; color: #fff; font-weight: 600; cursor: pointer; padding: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 8px; word-wrap: break-word; transition: all 0.3s; position: relative;';
-                        labelDiv.innerHTML = `✏️ ${label}`;
-                        labelDiv.title = 'Double-click to edit label';
-                        
-                        // Add hover effect
-                        labelDiv.onmouseover = function() {
-                            this.style.transform = 'scale(1.05)';
-                            this.style.boxShadow = '0 4px 12px rgba(102, 126, 234, 0.4)';
-                        };
-                        labelDiv.onmouseout = function() {
-                            this.style.transform = 'scale(1)';
-                            this.style.boxShadow = 'none';
-                        };
-                        
-                        labelDiv.ondblclick = function(ev) {
-                            console.log('Label double-clicked - entering edit mode');
-                            ev.stopPropagation();
-                            ev.preventDefault();
-                            
-                            const currentLabel = imgDiv.dataset.label;
-                            
-                            // Create input field
-                            const input = document.createElement('input');
-                            input.type = 'text';
-                            input.value = currentLabel;
-                            input.style.cssText = 'width: 100%; padding: 8px; font-size: 13px; border: 2px solid #667eea; border-radius: 5px; font-family: "Fredoka", sans-serif; font-weight: 600; text-align: center;';
-                            
-                            // Replace label with input
-                            labelDiv.innerHTML = '';
-                            labelDiv.appendChild(input);
-                            labelDiv.style.background = 'white';
-                            labelDiv.style.color = '#333';
-                            input.focus();
-                            input.select();
-                            
-                            const finishEdit = function() {
-                                const newLabel = input.value.trim();
-                                if (newLabel && newLabel !== currentLabel) {
-                                    imgDiv.dataset.label = newLabel;
-                                    labelDiv.innerHTML = `✏️ ${newLabel}`;
-                                    console.log('Label updated to:', newLabel);
-                                } else {
-                                    labelDiv.innerHTML = `✏️ ${currentLabel}`;
-                                }
-                                labelDiv.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                                labelDiv.style.color = '#fff';
-                            };
-                            
-                            input.onblur = finishEdit;
-                            input.onkeydown = function(e) {
-                                if (e.key === 'Enter') {
-                                    finishEdit();
-                                } else if (e.key === 'Escape') {
-                                    labelDiv.innerHTML = `✏️ ${currentLabel}`;
-                                    labelDiv.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-                                    labelDiv.style.color = '#fff';
-                                }
-                            };
-                        };
-                        
                         imgContainer.appendChild(img);
                         imgContainer.appendChild(removeBtn);
                         imgDiv.appendChild(imgContainer);
-                        imgDiv.appendChild(labelDiv);
                         imagesList.appendChild(imgDiv);
                         console.log('Image added to list. Total images:', imagesList.children.length);
                         
