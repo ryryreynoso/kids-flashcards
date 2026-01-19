@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kids Flashcard Fun!</title>
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Chewy&display=swap');
         
@@ -806,6 +811,69 @@
         let roundMistakes = 0;
         let showingSettings = false;
         
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCyhjX0epecXlUgF0_0RC1mu0Z0G_WZPFs",
+            authDomain: "kids-flashcards-945a2.firebaseapp.com",
+            databaseURL: "https://kids-flashcards-945a2-default-rtdb.firebaseio.com",
+            projectId: "kids-flashcards-945a2",
+            storageBucket: "kids-flashcards-945a2.firebasestorage.app",
+            messagingSenderId: "995243292324",
+            appId: "1:995243292324:web:d52f006f7fafd15d49d831",
+            measurementId: "G-KB437CB3M2"
+        };
+        
+        // Initialize Firebase
+        let database;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            console.log('Firebase initialized successfully');
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+        }
+        
+        // Load categories from Firebase on startup
+        function loadCategoriesFromStorage() {
+            if (!database) {
+                console.error('Firebase not initialized');
+                return;
+            }
+            
+            const categoriesRef = database.ref('flashcard-categories');
+            categoriesRef.on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    customCategories = data;
+                    console.log('Loaded categories from Firebase:', Object.keys(customCategories));
+                    updateCustomCategoriesList();
+                } else {
+                    console.log('No categories found in Firebase');
+                    customCategories = {};
+                    updateCustomCategoriesList();
+                }
+            }, (error) => {
+                console.error('Error loading categories:', error);
+            });
+        }
+        
+        // Save categories to Firebase (shared across all users)
+        async function saveCategoriesToStorage() {
+            if (!database) {
+                console.error('Firebase not initialized');
+                alert('Firebase is not configured. Please add your Firebase credentials.');
+                return;
+            }
+            
+            try {
+                await database.ref('flashcard-categories').set(customCategories);
+                console.log('Categories saved to Firebase');
+            } catch (error) {
+                console.error('Error saving categories:', error);
+                alert('Failed to save categories. Please try again.');
+            }
+        }
+        
         // Settings
         let settings = {
             numCards: 3,
@@ -1476,6 +1544,9 @@
             customCategories[categoryName] = images;
             console.log('Category saved:', categoryName, 'with', images.length, 'images');
             
+            // Save to persistent storage
+            saveCategoriesToStorage();
+            
             // Auto-select this category
             currentCategory = 'custom:' + categoryName;
             uploadedCards = images;
@@ -1494,6 +1565,7 @@
             
             if (confirm(`Delete the "${currentEditingCategory}" category? This cannot be undone.`)) {
                 delete customCategories[currentEditingCategory];
+                saveCategoriesToStorage();
                 closeCategoryModal();
                 updateCustomCategoriesList();
             }
@@ -1563,6 +1635,7 @@
         createStars();
         selectRandomCards();
         showSetupScreen();
+        loadCategoriesFromStorage();
     </script>
 </body>
 </html>
