@@ -719,6 +719,13 @@
                     ➕ Create New Category
                 </button>
             </div>
+            
+            <div style="border-top: 2px solid #eee; padding-top: 30px; margin-top: 30px;">
+                <h3 style="margin-bottom: 15px; color: #667eea;">About</h3>
+                <p style="font-size: 14px; color: #666; text-align: center; font-style: italic;">
+                    Reset Behavior - Melanie Reynoso
+                </p>
+            </div>
         </div>
     </div>
     
@@ -941,23 +948,43 @@
                     console.warn('⚠️ Data is very large (>10MB), this might fail');
                 }
                 
-                console.log('🔄 Calling Firebase set()...');
+                console.log('🔄 Calling Firebase set() with callback...');
                 
                 // Use callback-based approach which is more reliable
                 return await new Promise((resolve, reject) => {
-                    database.ref('flashcard-categories').set(customCategories, (error) => {
+                    let callbackCalled = false;
+                    let timeoutId;
+                    
+                    const ref = database.ref('flashcard-categories');
+                    console.log('📍 Database reference created:', ref.toString());
+                    
+                    ref.set(customCategories, (error) => {
+                        clearTimeout(timeoutId);
+                        callbackCalled = true;
+                        
                         if (error) {
-                            console.error('❌ Firebase set error:', error);
+                            console.error('❌ Firebase callback returned error:', error);
+                            console.error('Error details:', {
+                                code: error.code,
+                                message: error.message,
+                                name: error.name
+                            });
                             reject(error);
                         } else {
+                            console.log('✅ Firebase callback succeeded!');
                             console.log('✅ Save successful! Data written to Firebase.');
                             resolve(true);
                         }
                     });
                     
-                    // Still add timeout as backup
-                    setTimeout(() => {
-                        reject(new Error('Save timeout after 10 seconds'));
+                    console.log('⏰ Set callback registered, waiting...');
+                    
+                    // Timeout as backup
+                    timeoutId = setTimeout(() => {
+                        if (!callbackCalled) {
+                            console.error('⏰ Timeout reached - callback never fired');
+                            reject(new Error('Save timeout after 10 seconds - callback was never called by Firebase'));
+                        }
                     }, 10000);
                 });
             } catch (error) {
@@ -972,10 +999,11 @@
                           '2. Set ".read": true and ".write": true\n' +
                           '3. Click Publish');
                 } else if (error.message && error.message.includes('timeout')) {
-                    alert('Save timed out. This might be due to:\n' +
-                          '1. Poor internet connection\n' +
-                          '2. Firebase rules blocking writes\n' +
-                          '3. Data too large\n\n' +
+                    alert('Save timed out. Firebase write callback was never called.\n\n' +
+                          'This usually means:\n' +
+                          '1. Database rules are blocking writes\n' +
+                          '2. Network/firewall issue\n' +
+                          '3. Database URL is incorrect\n\n' +
                           'Check console for details.');
                 } else {
                     alert('Save failed: ' + error.message);
