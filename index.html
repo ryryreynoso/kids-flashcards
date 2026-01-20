@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kids Flashcard Fun!</title>
     
+    <!-- PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Flashcards">
+    <meta name="theme-color" content="#667eea">
+    
+    <!-- App Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+    <link rel="manifest" href="manifest.json">
+    
     <!-- Firebase SDK - Using jsdelivr CDN as alternative -->
     <script src="https://cdn.jsdelivr.net/npm/firebase@8.10.1/firebase-app.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/firebase@8.10.1/firebase-database.js"></script>
@@ -295,8 +307,20 @@
                 0 0 0 5px rgba(255,255,255,0.5);
         }
         
+        /* Prevent hover state from sticking on touch devices */
+        @media (hover: none) {
+            .card:hover {
+                transform: none;
+            }
+        }
+        
         .card:active {
             transform: translateY(-5px) scale(0.98);
+        }
+        
+        .card.clicked {
+            pointer-events: none;
+            transform: none !important;
         }
         
         .card-emoji {
@@ -721,9 +745,9 @@
             </div>
             
             <div style="border-top: 2px solid #eee; padding-top: 30px; margin-top: 30px;">
-                <h3 style="margin-bottom: 15px; color: #667eea;">About</h3>
+                <h3 style="margin-bottom: 15px; color: #667eea;">About Us</h3>
                 <p style="font-size: 14px; color: #666; text-align: center; font-style: italic;">
-                    Reset Behavior - Melanie Reynoso
+                    Reset Behavior by Melanie Reynoso (RBT)
                 </p>
             </div>
         </div>
@@ -1138,7 +1162,19 @@
             const prompt = document.getElementById('promptText');
             const roundIndicator = document.getElementById('roundIndicator');
             
+            // Clear all existing cards and reset any lingering styles
+            const existingCards = container.querySelectorAll('.card, .card-wrapper');
+            existingCards.forEach(card => {
+                card.style.transform = '';
+                card.style.boxShadow = '';
+                card.style.animation = '';
+                card.classList.remove('clicked');
+            });
+            
             container.innerHTML = '';
+            
+            // Force reflow to ensure all styles are cleared
+            void container.offsetHeight;
             
             // Apply layout class
             container.className = 'cards-container ' + settings.cardLayout;
@@ -1191,11 +1227,27 @@
                     container.appendChild(cardEl);
                 }
             });
+            
+            // Additional cleanup with delay to catch any lingering hover states
+            setTimeout(() => {
+                const allCards = container.querySelectorAll('.card, .card-wrapper');
+                allCards.forEach(card => {
+                    if (!card.classList.contains('clicked')) {
+                        card.style.transform = '';
+                        card.style.boxShadow = '';
+                    }
+                });
+            }, 100);
         }
         
         function handleCardClick(card, cardEl) {
             // Prevent multiple clicks during animation
             if (cardEl.classList.contains('clicked')) return;
+            
+            // Force blur to remove any stuck hover states (especially on mobile)
+            if (cardEl.blur) cardEl.blur();
+            cardEl.style.transform = '';
+            
             cardEl.classList.add('clicked');
             
             if (card === correctAnswer) {
