@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Kids Flashcard Fun!</title>
 
 ```
@@ -37,6 +37,10 @@
         font-family: 'Fredoka', sans-serif;
         background: linear-gradient(135deg, #1e3a5f 0%, #2a5298 50%, #3d7bc7 100%);
         min-height: 100vh;
+        min-height: -webkit-fill-available; /* iOS fix */
+        width: 100vw;
+        margin: 0;
+        padding: 0;
         overflow-x: hidden;
         overflow-y: auto;
         position: relative;
@@ -144,14 +148,14 @@
     .card {
         background: white;
         border-radius: 30px;
-        padding: 20px;
-        /* Responsive sizing based on orientation */
-        width: calc(90vw - 40px);  /* Portrait: almost full width */
-        height: calc(90vw - 40px);
+        padding: 15px;
+        /* Base sizing - will be overridden by orientation */
+        width: 250px;
+        height: 250px;
         max-width: 400px;
         max-height: 400px;
-        min-width: 200px;
-        min-height: 200px;
+        min-width: 150px;
+        min-height: 150px;
         flex-shrink: 0;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -169,47 +173,35 @@
         -webkit-tap-highlight-color: transparent;
     }
     
-    /* Landscape - maximize horizontal space, fit 3 cards */
+    /* Landscape - FIT 3 CARDS SIDE BY SIDE */
     @media (orientation: landscape) {
         .card {
-            width: calc(30vw - 30px);  /* 30% of width for 3 cards */
-            height: calc(30vw - 30px);
+            width: calc(25vw - 20px);  /* Much smaller: 25% x 3 = 75% */
+            height: calc(25vw - 20px);
+            max-width: 220px;
+            max-height: 220px;
+            min-width: 100px;
+            min-height: 100px;
+        }
+    }
+    
+    /* Portrait - BIGGER cards stacked */
+    @media (orientation: portrait) {
+        .card {
+            width: calc(65vw - 30px);
+            height: calc(65vw - 30px);
             max-width: 350px;
             max-height: 350px;
         }
     }
     
-    /* Portrait - larger cards stacked vertically */
-    @media (orientation: portrait) {
-        .card {
-            width: calc(70vw - 40px);  /* 70% of width, centered */
-            height: calc(70vw - 40px);
-            max-width: 400px;
-            max-height: 400px;
-        }
-    }
-    
-    /* Phone landscape - smaller to fit 3 */
-    @media (max-width: 767px) and (orientation: landscape) {
+    /* Small phone landscape - even smaller to fit */
+    @media (max-width: 900px) and (orientation: landscape) {
         .card {
             width: calc(28vw - 20px);
             height: calc(28vw - 20px);
             max-width: 200px;
             max-height: 200px;
-            min-width: 150px;
-            min-height: 150px;
-        }
-    }
-    
-    /* Tablet/iPad landscape - bigger cards */
-    @media (min-width: 768px) and (orientation: landscape) {
-        .card {
-            width: calc(30vw - 30px);
-            height: calc(30vw - 30px);
-            max-width: 350px;
-            max-height: 350px;
-            min-width: 250px;
-            min-height: 250px;
         }
     }
     
