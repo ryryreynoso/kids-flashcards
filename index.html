@@ -1046,10 +1046,10 @@
         newDataRef.once('value').then((snapshot) => {
             const newData = snapshot.val();
             
-            if (newData && newData.programs) {
+            if (newData && (newData.programs || newData.categories)) {
                 // New data exists, use it
                 console.log('✅ Loading from new data structure');
-                customCategories = newData.programs || {};
+                customCategories = newData.programs || newData.categories || {};
                 folders = newData.folders || {};
                 console.log('✅ Loaded programs:', Object.keys(customCategories));
                 console.log('📁 Loaded folders:', Object.keys(folders));
@@ -1064,7 +1064,7 @@
                 newDataRef.on('value', (snapshot) => {
                     const data = snapshot.val();
                     if (data) {
-                        customCategories = data.programs || {};
+                        customCategories = data.programs || data.categories || {};
                         folders = data.folders || {};
                         console.log('🔄 Data updated');
                         updateFoldersAndCategoriesList();
@@ -1088,7 +1088,7 @@
                         
                         // Save to new structure
                         const migratedData = {
-                            programs: customCategories,
+                            categories: customCategories,
                             folders: folders
                         };
                         
@@ -1105,7 +1105,7 @@
                             newDataRef.on('value', (snapshot) => {
                                 const data = snapshot.val();
                                 if (data) {
-                                    customCategories = data.programs || {};
+                                    customCategories = data.programs || data.categories || {};
                                     folders = data.folders || {};
                                     console.log('🔄 Data updated');
                                     updateFoldersAndCategoriesList();
@@ -1167,7 +1167,7 @@
             
             // Save both programs and folders
             const dataToSave = {
-                programs: customCategories,
+                categories: customCategories,
                 folders: folders
             };
             
