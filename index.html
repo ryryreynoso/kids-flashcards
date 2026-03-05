@@ -738,6 +738,13 @@
             <div style="border-top: 2px solid #eee; padding-top: 30px; margin-top: 30px;">
                 <h3 style="margin-bottom: 15px; color: #667eea;">📁 My Folders & Categories</h3>
                 <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Organize your categories into folders by kid or theme</p>
+                
+                <!-- Restore button if old data exists -->
+                <button id="restoreOldDataBtn" class="category-btn" onclick="manuallyRestoreOldData()" 
+                        style="width: 100%; background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%); color: white; margin-bottom: 15px; display: none;">
+                    🔄 Restore My Old Categories
+                </button>
+                
                 <div id="customCategoriesList"></div>
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
                     <button class="category-btn" onclick="createNewFolder()" style="flex: 1; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
@@ -2030,6 +2037,19 @@
             const container = document.getElementById('customCategoriesList');
             container.innerHTML = '';
             
+            // Check if we should show restore button
+            const hasNoData = Object.keys(customCategories).length === 0 && Object.keys(folders).length === 0;
+            if (hasNoData && database) {
+                // Check for old data
+                database.ref('flashcard-categories').once('value').then((snapshot) => {
+                    if (snapshot.val() && Object.keys(snapshot.val()).length > 0) {
+                        document.getElementById('restoreOldDataBtn').style.display = 'block';
+                    }
+                });
+            } else {
+                document.getElementById('restoreOldDataBtn').style.display = 'none';
+            }
+            
             // If viewing a specific folder, show categories in that folder
             if (currentFolder) {
                 // Back button
@@ -2138,6 +2158,40 @@
                 delete folders[folderName];
                 saveCategoriesToStorage();
                 updateFoldersAndCategoriesList();
+            }
+        }
+        
+        async function manuallyRestoreOldData() {
+            if (!confirm('This will restore your old categories. Continue?')) {
+                return;
+            }
+            
+            console.log('🔄 Manually restoring old data...');
+            const oldDataRef = database.ref('flashcard-categories');
+            
+            try {
+                const snapshot = await oldDataRef.once('value');
+                const oldData = snapshot.val();
+                
+                if (oldData) {
+                    console.log('✅ Found old data:', Object.keys(oldData));
+                    customCategories = oldData;
+                    folders = {};
+                    
+                    // Save to new location
+                    await saveCategoriesToStorage();
+                    
+                    alert('Categories restored! They appear in the "ungrouped" section. You can now create folders to organize them.');
+                    updateFoldersAndCategoriesList();
+                    
+                    // Hide restore button
+                    document.getElementById('restoreOldDataBtn').style.display = 'none';
+                } else {
+                    alert('No old data found to restore.');
+                }
+            } catch (error) {
+                console.error('❌ Restore failed:', error);
+                alert('Failed to restore: ' + error.message);
             }
         }
         
