@@ -994,6 +994,11 @@
                     console.log('📁 Loaded folders:', Object.keys(folders));
                     updateFoldersAndCategoriesList();
                     
+                    // Update folder selection screen if that's what's showing
+                    if (gameMode === 'folder-select') {
+                        showFolderSelectionScreen();
+                    }
+                    
                     // Set up real-time listener
                     newDataRef.on('value', (snapshot) => {
                         const data = snapshot.val();
@@ -1002,6 +1007,11 @@
                             folders = data.folders || {};
                             console.log('🔄 Data updated');
                             updateFoldersAndCategoriesList();
+                            
+                            // Update folder screen if showing
+                            if (gameMode === 'folder-select') {
+                                showFolderSelectionScreen();
+                            }
                         }
                     });
                 } else {
@@ -1025,6 +1035,11 @@
                                 console.log('✅ Migration complete!');
                                 updateFoldersAndCategoriesList();
                                 
+                                // Update folder screen if showing
+                                if (gameMode === 'folder-select') {
+                                    showFolderSelectionScreen();
+                                }
+                                
                                 // Set up real-time listener on new path
                                 newDataRef.on('value', (snapshot) => {
                                     const data = snapshot.val();
@@ -1033,6 +1048,11 @@
                                         folders = data.folders || {};
                                         console.log('🔄 Data updated');
                                         updateFoldersAndCategoriesList();
+                                        
+                                        // Update folder screen if showing
+                                        if (gameMode === 'folder-select') {
+                                            showFolderSelectionScreen();
+                                        }
                                     }
                                 });
                             }).catch((error) => {
