@@ -2694,11 +2694,44 @@
                 return;
             }
             
-            // Create empty folders object in Firebase
-            const ref = database.ref('flashcard-data/folders');
-            await ref.set({});
+            const folderName = prompt('Create a folder and add ALL programs to it?\n\nEnter folder name (e.g., "All Programs"):');
             
-            alert('✅ Created empty folders field in Firebase!\n\nNow use "📁 New Folder" button to create your folders.\n\nOr I can auto-create AaSh and ToYe - would you like that?');
+            if (!folderName) {
+                alert('Cancelled.');
+                return;
+            }
+            
+            // Get all program names
+            const allProgramNames = Object.keys(customCategories);
+            
+            if (allProgramNames.length === 0) {
+                alert('No programs found!');
+                return;
+            }
+            
+            // Create folder with all programs
+            folders = {
+                [folderName]: allProgramNames
+            };
+            
+            console.log('📁 Creating folder:', folderName, 'with', allProgramNames.length, 'programs');
+            
+            // Save to Firebase
+            const ref = database.ref('flashcard-data');
+            await ref.update({
+                folders: folders
+            });
+            
+            // Update localStorage
+            try {
+                localStorage.setItem('backup-folders', JSON.stringify(folders));
+            } catch(e) {}
+            
+            // Update UI
+            updateFoldersAndCategoriesList();
+            showFolderSelectionScreen();
+            
+            alert(`✅ Created folder "${folderName}" with all ${allProgramNames.length} programs!\n\nYou can now organize them into separate folders.`);
         }
         
         function createNewFolder() {
