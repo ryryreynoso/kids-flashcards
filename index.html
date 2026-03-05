@@ -143,8 +143,8 @@
             background: white;
             border-radius: 30px;
             padding: 20px;
-            width: 280px;
-            height: 280px;
+            width: 240px;  /* Smaller to fit 3 side-by-side */
+            height: 240px;
             flex-shrink: 0;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -1613,8 +1613,9 @@
                 container.className = 'cards-container horizontal';
                 container.style.flexDirection = 'row';
                 container.style.display = 'flex';
-                container.style.flexWrap = 'wrap';
+                container.style.flexWrap = 'nowrap'; // DON'T WRAP - keep in one row
                 container.style.justifyContent = 'center';
+                container.style.overflowX = 'auto'; // Allow horizontal scroll if needed
                 console.log('🎨 Applied className:', container.className);
                 console.log('🎨 Inline flexDirection:', container.style.flexDirection);
                 console.log('🎨 Container flex-direction:', window.getComputedStyle(container).flexDirection);
@@ -1692,8 +1693,9 @@
             container.className = 'cards-container horizontal';
             container.style.flexDirection = 'row';
             container.style.display = 'flex';
-            container.style.flexWrap = 'wrap';
+            container.style.flexWrap = 'nowrap'; // DON'T WRAP
             container.style.justifyContent = 'center';
+            container.style.overflowX = 'auto';
             
             // Show round indicator if limited rounds
             if (settings.maxTrials > 0) {
