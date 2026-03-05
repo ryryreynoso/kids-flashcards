@@ -123,11 +123,11 @@
             flex-direction: row !important; /* FORCE HORIZONTAL */
             justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 2vw;  /* Responsive gap - 2% of viewport width */
             flex-wrap: wrap;
             max-width: 100%;
             margin: 0 auto;
-            padding: 20px 20px 120px 20px; /* Extra bottom padding */
+            padding: 20px;
             min-height: 320px;
         }
         
@@ -143,8 +143,12 @@
             background: white;
             border-radius: 30px;
             padding: 20px;
-            width: 240px;  /* Smaller to fit 3 side-by-side */
-            height: 240px;
+            width: calc(30vw - 30px);  /* 30% of viewport width, responsive */
+            height: calc(30vw - 30px);
+            max-width: 280px;  /* Don't get too big on large screens */
+            max-height: 280px;
+            min-width: 180px;  /* Don't get too small */
+            min-height: 180px;
             flex-shrink: 0;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -1609,13 +1613,12 @@
                 container.innerHTML = '';
                 controls.style.display = 'flex'; // Show controls with settings button
                 
-                // Apply horizontal layout - FORCE IT
+                // Apply horizontal layout - cards auto-resize
                 container.className = 'cards-container horizontal';
                 container.style.flexDirection = 'row';
                 container.style.display = 'flex';
-                container.style.flexWrap = 'nowrap'; // DON'T WRAP - keep in one row
+                container.style.flexWrap = 'wrap'; // Allow wrap since cards resize
                 container.style.justifyContent = 'center';
-                container.style.overflowX = 'auto'; // Allow horizontal scroll if needed
                 console.log('🎨 Applied className:', container.className);
                 console.log('🎨 Inline flexDirection:', container.style.flexDirection);
                 console.log('🎨 Container flex-direction:', window.getComputedStyle(container).flexDirection);
@@ -1689,13 +1692,12 @@
             // Force reflow to ensure all styles are cleared
             void container.offsetHeight;
             
-            // Apply horizontal layout - FORCE IT
+            // Apply horizontal layout - cards auto-resize
             container.className = 'cards-container horizontal';
             container.style.flexDirection = 'row';
             container.style.display = 'flex';
-            container.style.flexWrap = 'nowrap'; // DON'T WRAP
+            container.style.flexWrap = 'wrap';
             container.style.justifyContent = 'center';
-            container.style.overflowX = 'auto';
             
             // Show round indicator if limited rounds
             if (settings.maxTrials > 0) {
