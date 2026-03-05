@@ -806,6 +806,11 @@
             <button class="program-btn" onclick="debugFirebase()" style="width: 100%; margin-top: 10px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);">
                 🔍 Debug: Check Firebase Data
             </button>
+            
+            <!-- Force reload button -->
+            <button class="program-btn" onclick="forceReloadFromFirebase()" style="width: 100%; margin-top: 10px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                🔄 Force Reload from Firebase
+            </button>
         </div>
         
         <div style="border-top: 2px solid #eee; padding-top: 30px; margin-top: 30px;">
@@ -2733,6 +2738,41 @@
         console.log('📊 Firebase Data:', data);
         console.log('📊 Memory - customCategories:', customCategories);
         console.log('📊 Memory - folders:', folders);
+    }
+    
+    async function forceReloadFromFirebase() {
+        if (!database) {
+            alert('Firebase not initialized!');
+            return;
+        }
+        
+        console.log('🔄 FORCE RELOADING FROM FIREBASE...');
+        
+        const ref = database.ref('flashcard-data');
+        const snapshot = await ref.once('value');
+        const data = snapshot.val();
+        
+        if (data) {
+            customCategories = data.categories || {};
+            folders = data.folders || {};
+            
+            console.log('✅ FORCE LOADED categories:', Object.keys(customCategories).length);
+            console.log('✅ FORCE LOADED folders:', Object.keys(folders).length);
+            
+            // Update localStorage
+            try {
+                localStorage.setItem('backup-categories', JSON.stringify(customCategories));
+                localStorage.setItem('backup-folders', JSON.stringify(folders));
+            } catch(e) {}
+            
+            // Update both UIs
+            updateFoldersAndCategoriesList();
+            showFolderSelectionScreen();
+            
+            alert('✅ Reloaded!\n\nCategories: ' + Object.keys(customCategories).length + '\nFolders: ' + Object.keys(folders).length);
+        } else {
+            alert('❌ No data found in Firebase!');
+        }
     }
     
     function createNewFolder() {
