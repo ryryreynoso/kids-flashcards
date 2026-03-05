@@ -1042,9 +1042,16 @@
         const newDataRef = database.ref('flashcard-data');
         const oldDataRef = database.ref('flashcard-categories');
         
+        console.log('🔍 Checking Firebase path: flashcard-data');
+        
         // First check if new data exists
         newDataRef.once('value').then((snapshot) => {
             const newData = snapshot.val();
+            console.log('📦 Raw Firebase data:', newData);
+            console.log('📦 newData exists?', !!newData);
+            console.log('📦 newData.programs?', newData?.programs);
+            console.log('📦 newData.categories?', newData?.categories);
+            console.log('📦 newData.folders?', newData?.folders);
             
             if (newData && (newData.programs || newData.categories)) {
                 // New data exists, use it
