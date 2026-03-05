@@ -2100,12 +2100,17 @@
                     });
                 }
             } else {
-                // Show folder list
+                // Show folder list OR ungrouped categories
                 const folderKeys = Object.keys(folders);
+                const categoryKeys = Object.keys(customCategories);
                 
-                if (folderKeys.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No folders yet. Create one to organize your categories!</p>';
-                } else {
+                // Get categories that aren't in any folder
+                const categoriesInFolders = new Set();
+                Object.values(folders).forEach(cats => cats.forEach(cat => categoriesInFolders.add(cat)));
+                const ungroupedCategories = categoryKeys.filter(cat => !categoriesInFolders.has(cat));
+                
+                // Show folders first
+                if (folderKeys.length > 0) {
                     folderKeys.forEach(folderName => {
                         const folderDiv = document.createElement('div');
                         folderDiv.style.display = 'flex';
@@ -2135,6 +2140,49 @@
                         folderDiv.appendChild(deleteBtn);
                         container.appendChild(folderDiv);
                     });
+                }
+                
+                // Show ungrouped categories
+                if (ungroupedCategories.length > 0) {
+                    if (folderKeys.length > 0) {
+                        const divider = document.createElement('div');
+                        divider.style.margin = '20px 0 10px 0';
+                        divider.style.padding = '10px 0';
+                        divider.style.borderTop = '2px solid #eee';
+                        divider.innerHTML = '<p style="color: #999; font-size: 14px; text-align: center;">Ungrouped Categories</p>';
+                        container.appendChild(divider);
+                    }
+                    
+                    ungroupedCategories.forEach(categoryName => {
+                        const categoryDiv = document.createElement('div');
+                        categoryDiv.style.display = 'flex';
+                        categoryDiv.style.gap = '10px';
+                        categoryDiv.style.marginBottom = '10px';
+                        
+                        // Use category button
+                        const useBtn = document.createElement('button');
+                        useBtn.className = 'category-btn';
+                        useBtn.style.flex = '1';
+                        useBtn.textContent = `🎴 ${categoryName} (${customCategories[categoryName].length} images)`;
+                        useBtn.onclick = () => useCustomCategory(categoryName);
+                        
+                        // Edit button
+                        const editBtn = document.createElement('button');
+                        editBtn.className = 'category-btn';
+                        editBtn.style.flex = '0 0 60px';
+                        editBtn.style.background = 'linear-gradient(135deg, #ffd93d 0%, #ff8c42 100())';
+                        editBtn.textContent = '✏️';
+                        editBtn.onclick = () => editCategory(categoryName);
+                        
+                        categoryDiv.appendChild(useBtn);
+                        categoryDiv.appendChild(editBtn);
+                        container.appendChild(categoryDiv);
+                    });
+                }
+                
+                // Show message if completely empty
+                if (folderKeys.length === 0 && ungroupedCategories.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No folders or categories yet. Create one to get started!</p>';
                 }
             }
         }
