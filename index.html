@@ -674,7 +674,7 @@
             <div class="round-indicator" id="roundIndicator" style="display: none;"></div>
             <div class="prompt">
                 <span class="emoji-decoration">✨</span>
-                <span id="promptText">Touch the Cat!</span>
+                <span id="promptText">Touch Cat!</span>
                 <span class="emoji-decoration">✨</span>
             </div>
         </div>
@@ -730,12 +730,6 @@
             <div style="border-top: 2px solid #eee; padding-top: 30px; margin-top: 30px;">
                 <h3 style="margin-bottom: 15px; color: #667eea;">📁 My Folders & Programs</h3>
                 <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Organize your programs into folders by kid or theme</p>
-                
-                <!-- Restore button if old data exists -->
-                <button id="restoreOldDataBtn" class="program-btn" onclick="manuallyRestoreOldData()" 
-                        style="width: 100%; background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%); color: white; margin-bottom: 15px; display: none;">
-                    🔄 Restore My Old Programs
-                </button>
                 
                 <div id="customCategoriesList"></div>
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
@@ -1305,11 +1299,11 @@
             if (settings.maxRounds > 0) {
                 roundIndicator.style.display = 'inline-block';
                 roundIndicator.textContent = `Round ${currentRound} of ${settings.maxRounds}`;
-                prompt.textContent = `Touch the ${correctAnswer.label}!`;
+                prompt.textContent = `Touch ${correctAnswer.label}!`;
             } else {
                 roundIndicator.style.display = 'inline-block';
                 roundIndicator.textContent = `Round ${currentRound}`;
-                prompt.textContent = `Touch the ${correctAnswer.label}!`;
+                prompt.textContent = `Touch ${correctAnswer.label}!`;
             }
             
             // Shuffle the cards order - create truly random order each time
@@ -1475,7 +1469,8 @@
             const container = document.querySelector('.confetti-container');
             const colors = ['#ff6b6b', '#ffd93d', '#6bcf7f', '#667eea', '#f093fb', '#ff8c42'];
             
-            for (let i = 0; i < 100; i++) {
+            // MUCH MORE CONFETTI - 300 pieces!
+            for (let i = 0; i < 300; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
                 confetti.style.left = Math.random() * 100 + '%';
@@ -2029,19 +2024,6 @@
             const container = document.getElementById('customCategoriesList');
             container.innerHTML = '';
             
-            // Check if we should show restore button
-            const hasNoData = Object.keys(customCategories).length === 0 && Object.keys(folders).length === 0;
-            if (hasNoData && database) {
-                // Check for old data
-                database.ref('flashcard-categories').once('value').then((snapshot) => {
-                    if (snapshot.val() && Object.keys(snapshot.val()).length > 0) {
-                        document.getElementById('restoreOldDataBtn').style.display = 'block';
-                    }
-                });
-            } else {
-                document.getElementById('restoreOldDataBtn').style.display = 'none';
-            }
-            
             // If viewing a specific folder, show programs in that folder
             if (currentFolder) {
                 // Back button
@@ -2243,9 +2225,6 @@
                     
                     alert('Programs restored! They appear in the "ungrouped" section. You can now create folders to organize them.');
                     updateFoldersAndCategoriesList();
-                    
-                    // Hide restore button
-                    document.getElementById('restoreOldDataBtn').style.display = 'none';
                 } else {
                     alert('No old data found to restore.');
                 }
