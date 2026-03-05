@@ -1260,18 +1260,44 @@
                     </div>
                 `;
             } else {
-                // Show folder buttons
-                folderKeys.forEach(folderName => {
+                // Show folder buttons with beautiful gradients
+                const gradients = [
+                    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', // Purple
+                    'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', // Pink
+                    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', // Blue
+                    'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', // Green
+                    'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', // Pink-Yellow
+                    'linear-gradient(135deg, #30cfd0 0%, #330867 100%)', // Teal-Purple
+                ];
+                
+                folderKeys.forEach((folderName, index) => {
                     const folderBtn = document.createElement('button');
                     folderBtn.className = 'category-btn';
                     folderBtn.style.width = '100%';
-                    folderBtn.style.fontSize = '20px';
-                    folderBtn.style.padding = '20px';
+                    folderBtn.style.fontSize = '22px';
+                    folderBtn.style.fontWeight = '700';
+                    folderBtn.style.padding = '25px';
+                    folderBtn.style.background = gradients[index % gradients.length];
+                    folderBtn.style.color = 'white';
+                    folderBtn.style.border = 'none';
+                    folderBtn.style.borderRadius = '20px';
+                    folderBtn.style.boxShadow = '0 8px 20px rgba(0,0,0,0.15)';
+                    folderBtn.style.transition = 'all 0.3s ease';
                     
                     const programCount = (folders[folderName] || []).length;
                     folderBtn.textContent = `📁 ${folderName} (${programCount} programs)`;
                     
                     folderBtn.onclick = () => showFolderPrograms(folderName);
+                    
+                    // Hover effect
+                    folderBtn.onmouseover = () => {
+                        folderBtn.style.transform = 'translateY(-3px) scale(1.02)';
+                        folderBtn.style.boxShadow = '0 12px 30px rgba(0,0,0,0.25)';
+                    };
+                    folderBtn.onmouseout = () => {
+                        folderBtn.style.transform = 'translateY(0) scale(1)';
+                        folderBtn.style.boxShadow = '0 8px 20px rgba(0,0,0,0.15)';
+                    };
                     
                     container.appendChild(folderBtn);
                 });
@@ -1309,19 +1335,44 @@
             // Back button
             const backBtn = document.createElement('button');
             backBtn.className = 'category-btn';
+            backBtn.style.width = '100%';
+            backBtn.style.fontSize = '18px';
+            backBtn.style.fontWeight = '700';
+            backBtn.style.padding = '18px';
             backBtn.style.background = 'linear-gradient(135deg, #999 0%, #666 100())';
             backBtn.style.color = 'white';
+            backBtn.style.borderRadius = '15px';
+            backBtn.style.boxShadow = '0 6px 15px rgba(0,0,0,0.15)';
             backBtn.textContent = '⬅️ Back to Folders';
             backBtn.onclick = () => showFolderSelectionScreen();
             container.appendChild(backBtn);
             
-            // Program buttons
-            programsInFolder.forEach(categoryName => {
+            // Program buttons with colorful gradients
+            const programGradients = [
+                'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', // Purple
+                'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', // Pink
+                'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)', // Blue
+                'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)', // Green
+                'linear-gradient(135deg, #fa709a 0%, #fee140 100%)', // Pink-Yellow
+                'linear-gradient(135deg, #fccb90 0%, #d57eeb 100%)', // Orange-Purple
+                'linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%)', // Lavender-Blue
+                'linear-gradient(135deg, #f77062 0%, #fe5196 100%)', // Red-Pink
+            ];
+            
+            programsInFolder.forEach((categoryName, index) => {
                 if (customCategories[categoryName]) {
                     const programBtn = document.createElement('button');
                     programBtn.className = 'category-btn';
-                    programBtn.style.fontSize = '18px';
-                    programBtn.style.padding = '18px';
+                    programBtn.style.width = '100%';
+                    programBtn.style.fontSize = '20px';
+                    programBtn.style.fontWeight = '700';
+                    programBtn.style.padding = '22px';
+                    programBtn.style.background = programGradients[index % programGradients.length];
+                    programBtn.style.color = 'white';
+                    programBtn.style.border = 'none';
+                    programBtn.style.borderRadius = '18px';
+                    programBtn.style.boxShadow = '0 8px 20px rgba(0,0,0,0.15)';
+                    programBtn.style.transition = 'all 0.3s ease';
                     programBtn.textContent = `🎴 ${categoryName} (${customCategories[categoryName].length} images)`;
                     
                     programBtn.onclick = () => {
@@ -1329,6 +1380,16 @@
                         uploadedCards = customCategories[categoryName];
                         selectRandomCards();
                         showSetupScreen();
+                    };
+                    
+                    // Hover effect
+                    programBtn.onmouseover = () => {
+                        programBtn.style.transform = 'translateY(-3px) scale(1.02)';
+                        programBtn.style.boxShadow = '0 12px 30px rgba(0,0,0,0.25)';
+                    };
+                    programBtn.onmouseout = () => {
+                        programBtn.style.transform = 'translateY(0) scale(1)';
+                        programBtn.style.boxShadow = '0 8px 20px rgba(0,0,0,0.15)';
                     };
                     
                     container.appendChild(programBtn);
