@@ -1435,7 +1435,7 @@
                     folderBtn.style.transition = 'all 0.3s ease';
                     
                     const programCount = (folders[folderName] || []).length;
-                    folderBtn.textContent = `📁 ${folderName} (${programCount} programs)`;
+                    folderBtn.textContent = `${folderName} (${programCount} programs)`;
                     
                     folderBtn.onclick = () => showFolderPrograms(folderName);
                     
@@ -1523,7 +1523,7 @@
                     programBtn.style.borderRadius = '18px';
                     programBtn.style.boxShadow = '0 8px 20px rgba(0,0,0,0.15)';
                     programBtn.style.transition = 'all 0.3s ease';
-                    programBtn.textContent = `🎴 ${categoryName} (${customCategories[categoryName].length} images)`;
+                    programBtn.textContent = `${categoryName} (${customCategories[categoryName].length} images)`;
                     
                     programBtn.onclick = () => {
                         currentCategory = 'custom:' + categoryName;
@@ -2447,7 +2447,7 @@
                             const useBtn = document.createElement('button');
                             useBtn.className = 'program-btn';
                             useBtn.style.flex = '1';
-                            useBtn.textContent = `🎴 ${categoryName} (${customCategories[categoryName].length} images)`;
+                            useBtn.textContent = `${categoryName} (${customCategories[categoryName].length} images)`;
                             useBtn.onclick = () => useCustomProgram(categoryName);
                             
                             // Copy button
@@ -2507,7 +2507,7 @@
                         openBtn.className = 'program-btn';
                         openBtn.style.flex = '1';
                         const programCount = (folders[folderName] || []).length;
-                        openBtn.textContent = `📁 ${folderName} (${programCount} programs)`;
+                        openBtn.textContent = `${folderName} (${programCount} programs)`;
                         openBtn.onclick = () => {
                             currentFolder = folderName;
                             updateFoldersAndCategoriesList();
@@ -2548,7 +2548,7 @@
                         const useBtn = document.createElement('button');
                         useBtn.className = 'program-btn';
                         useBtn.style.flex = '1';
-                        useBtn.textContent = `🎴 ${categoryName} (${customCategories[categoryName].length} images)`;
+                        useBtn.textContent = `${categoryName} (${customCategories[categoryName].length} images)`;
                         useBtn.onclick = () => useCustomProgram(categoryName);
                         
                         // Move to folder button
