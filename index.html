@@ -1963,6 +1963,9 @@
                 imagesList.appendChild(imgDiv);
             });
             
+            // Populate folder dropdown
+            populateFolderDropdown();
+            
             document.getElementById('settingsModal').classList.remove('show');
             setTimeout(() => {
                 document.getElementById('categoryModal').classList.add('show');
@@ -2291,6 +2294,15 @@
                             useBtn.textContent = `🎴 ${categoryName} (${customCategories[categoryName].length} images)`;
                             useBtn.onclick = () => useCustomProgram(categoryName);
                             
+                            // Copy button
+                            const copyBtn = document.createElement('button');
+                            copyBtn.className = 'program-btn';
+                            copyBtn.style.flex = '0 0 60px';
+                            copyBtn.style.background = 'linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100())';
+                            copyBtn.textContent = '📋';
+                            copyBtn.title = 'Copy to another folder';
+                            copyBtn.onclick = () => copyProgramToFolder(categoryName);
+                            
                             // Remove from folder button
                             const removeBtn = document.createElement('button');
                             removeBtn.className = 'program-btn';
@@ -2304,11 +2316,12 @@
                             const editBtn = document.createElement('button');
                             editBtn.className = 'program-btn';
                             editBtn.style.flex = '0 0 60px';
-                            editBtn.style.background = 'linear-gradient(135deg, #ffd93d 0%, #ff8c42 100%)';
+                            editBtn.style.background = 'linear-gradient(135deg, #ffd93d 0%, #ff8c42 100())';
                             editBtn.textContent = '✏️';
                             editBtn.onclick = () => editProgram(categoryName);
                             
                             categoryDiv.appendChild(useBtn);
+                            categoryDiv.appendChild(copyBtn);
                             categoryDiv.appendChild(removeBtn);
                             categoryDiv.appendChild(editBtn);
                             container.appendChild(categoryDiv);
@@ -2587,10 +2600,11 @@
         }
         
         function useCustomProgram(categoryName) {
-            currentProgram = 'custom:' + categoryName;
+            currentCategory = 'custom:' + categoryName;
             uploadedCards = customCategories[categoryName];
+            selectRandomCards();
             closeSettings();
-            resetGame();
+            showSetupScreen();
         }
         
         // Add shake animation
