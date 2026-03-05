@@ -62,6 +62,18 @@
         position: relative;
     }
     
+    /* Fill the bottom white bar with background color */
+    body::after {
+        content: '';
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: env(safe-area-inset-bottom, 100px);
+        background: #3d7bc7; /* Match bottom of gradient */
+        z-index: 0;
+    }
+    
     .stars {
         position: fixed;
         top: 0;
