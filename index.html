@@ -1663,23 +1663,35 @@
             container.innerHTML = '';
             controls.style.display = 'flex'; // Show controls with settings button
             
-            // Detect orientation and set layout accordingly
+            // Detect orientation and FORCE layout with inline styles
             const isLandscape = window.innerWidth > window.innerHeight;
+            
+            // Clear any existing styles first
+            container.removeAttribute('style');
             
             if (isLandscape) {
                 // LANDSCAPE = HORIZONTAL (side by side)
                 container.className = 'cards-container horizontal';
+                container.style.display = 'flex';
                 container.style.flexDirection = 'row';
+                container.style.justifyContent = 'center';
+                container.style.alignItems = 'center';
+                container.style.flexWrap = 'wrap';
+                container.style.gap = '2vw';
+                container.style.padding = '20px';
             } else {
                 // PORTRAIT = VERTICAL (stacked)
                 container.className = 'cards-container vertical';
+                container.style.display = 'flex';
                 container.style.flexDirection = 'column';
+                container.style.justifyContent = 'center';
+                container.style.alignItems = 'center';
+                container.style.flexWrap = 'wrap';
+                container.style.gap = '2vw';
+                container.style.padding = '20px';
             }
             
-            container.style.display = 'flex';
-            container.style.flexWrap = 'wrap';
-            container.style.justifyContent = 'center';
-            
+            console.log('🎨 Screen:', window.innerWidth + 'x' + window.innerHeight);
             console.log('🎨 Orientation:', isLandscape ? 'LANDSCAPE (horizontal)' : 'PORTRAIT (vertical)');
             console.log('🎨 Applied className:', container.className);
             console.log('🎨 Flex direction:', container.style.flexDirection);
@@ -1759,22 +1771,33 @@
         // Force reflow to ensure all styles are cleared
         void container.offsetHeight;
         
-        // Detect orientation and set layout accordingly
+        // Detect orientation and FORCE layout with inline styles
         const isLandscape = window.innerWidth > window.innerHeight;
+        
+        // Clear any existing styles first
+        container.removeAttribute('style');
         
         if (isLandscape) {
             // LANDSCAPE = HORIZONTAL (side by side)
             container.className = 'cards-container horizontal';
+            container.style.display = 'flex';
             container.style.flexDirection = 'row';
+            container.style.justifyContent = 'center';
+            container.style.alignItems = 'center';
+            container.style.flexWrap = 'wrap';
+            container.style.gap = '2vw';
+            container.style.padding = '20px';
         } else {
             // PORTRAIT = VERTICAL (stacked)
             container.className = 'cards-container vertical';
+            container.style.display = 'flex';
             container.style.flexDirection = 'column';
+            container.style.justifyContent = 'center';
+            container.style.alignItems = 'center';
+            container.style.flexWrap = 'wrap';
+            container.style.gap = '2vw';
+            container.style.padding = '20px';
         }
-        
-        container.style.display = 'flex';
-        container.style.flexWrap = 'wrap';
-        container.style.justifyContent = 'center';
         
         // Show round indicator if limited rounds
         if (settings.maxTrials > 0) {
@@ -3052,18 +3075,31 @@
         const isLandscape = window.innerWidth > window.innerHeight;
         console.log(`📱 Orientation changed: ${isLandscape ? 'LANDSCAPE' : 'PORTRAIT'} (${window.innerWidth}x${window.innerHeight})`);
         
+        // Clear and rebuild inline styles
+        container.removeAttribute('style');
+        
         if (isLandscape) {
             // LANDSCAPE = HORIZONTAL (side by side)
             console.log('➡️ Setting HORIZONTAL layout (row)');
-            container.classList.remove('vertical');
-            container.classList.add('horizontal');
+            container.className = 'cards-container horizontal';
+            container.style.display = 'flex';
             container.style.flexDirection = 'row';
+            container.style.justifyContent = 'center';
+            container.style.alignItems = 'center';
+            container.style.flexWrap = 'wrap';
+            container.style.gap = '2vw';
+            container.style.padding = '20px';
         } else {
             // PORTRAIT = VERTICAL (stacked)
             console.log('⬇️ Setting VERTICAL layout (column)');
-            container.classList.remove('horizontal');
-            container.classList.add('vertical');
+            container.className = 'cards-container vertical';
+            container.style.display = 'flex';
             container.style.flexDirection = 'column';
+            container.style.justifyContent = 'center';
+            container.style.alignItems = 'center';
+            container.style.flexWrap = 'wrap';
+            container.style.gap = '2vw';
+            container.style.padding = '20px';
         }
     }
     
