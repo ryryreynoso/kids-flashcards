@@ -737,7 +737,7 @@
                     🔄 Restore My Old Programs
                 </button>
                 
-                <div id="customProgramsList"></div>
+                <div id="customCategoriesList"></div>
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
                     <button class="program-btn" onclick="createNewFolder()" style="flex: 1; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                         📁 New Folder
@@ -757,20 +757,20 @@
         </div>
     </div>
     
-    <div class="modal" id="programModal">
+    <div class="modal" id="categoryModal">
         <div class="modal-content" style="max-height: 85vh; overflow-y: auto;">
             <button class="close-modal" onclick="closeProgramModal()">×</button>
-            <h2 id="programModalTitle">Manage Program</h2>
+            <h2 id="categoryModalTitle">Manage Program</h2>
             
             <div style="margin-bottom: 20px;">
                 <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Program Name:</label>
-                <input type="text" id="programNameInput" placeholder="e.g., My Photos, Family, etc."
+                <input type="text" id="categoryNameInput" placeholder="e.g., My Photos, Family, etc."
                        style="width: 100%; padding: 12px; border: 2px solid #667eea; border-radius: 10px; font-size: 16px; font-family: 'Fredoka', sans-serif;">
             </div>
             
             <div style="margin-bottom: 20px;">
                 <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">📁 Put in Folder:</label>
-                <select id="programFolderSelect"
+                <select id="categoryFolderSelect"
                         style="width: 100%; padding: 12px; border: 2px solid #667eea; border-radius: 10px; font-size: 16px; font-family: 'Fredoka', sans-serif;">
                     <option value="">No folder (ungrouped)</option>
                 </select>
@@ -779,15 +779,15 @@
             <div style="margin-bottom: 20px;">
                 <h3 style="margin-bottom: 10px;">Images in this program:</h3>
                 <p style="font-size: 13px; color: #666; margin-bottom: 10px;">💡 Click on any image label to edit it</p>
-                <div class="uploaded-images" id="programImagesList"></div>
+                <div class="uploaded-images" id="categoryImagesList"></div>
             </div>
             
-            <div class="upload-area" onclick="document.getElementById('programFileInput').click()" style="margin-bottom: 20px;">
+            <div class="upload-area" onclick="document.getElementById('categoryFileInput').click()" style="margin-bottom: 20px;">
                 <p style="font-size: 48px; margin-bottom: 10px;">📸</p>
                 <p style="font-size: 18px; color: #667eea; font-weight: 600;">Add More Images</p>
                 <p style="font-size: 14px; color: #999; margin-top: 5px;">Select multiple images at once</p>
             </div>
-            <input type="file" id="programFileInput" accept="image/*" multiple onchange="handleProgramImageUpload(event)">
+            <input type="file" id="categoryFileInput" accept="image/*" multiple onchange="handleProgramImageUpload(event)">
             
             <div style="display: flex; gap: 10px; margin-top: 20px;">
                 <button class="btn btn-primary" onclick="saveProgramChanges()" style="flex: 1;">Save Program</button>
@@ -909,8 +909,8 @@
         let currentCards = [];
         let correctAnswer = null;
         let uploadedCards = [];
-        let customPrograms = {}; // Store custom programs: { programName: [cards] }
-        let folders = {}; // Store folders: { folderName: [programNames] }
+        let customCategories = {}; // Store custom programs: { categoryName: [cards] }
+        let folders = {}; // Store folders: { folderName: [categoryNames] }
         let currentFolder = null; // Currently selected folder
         let gameMode = 'setup'; // 'setup', 'playing', or 'results'
         let currentRound = 0;
@@ -994,20 +994,20 @@
                 if (newData && newData.programs) {
                     // New data exists, use it
                     console.log('✅ Loading from new data structure');
-                    customPrograms = newData.programs || {};
+                    customCategories = newData.programs || {};
                     folders = newData.folders || {};
-                    console.log('✅ Loaded programs:', Object.keys(customPrograms));
+                    console.log('✅ Loaded programs:', Object.keys(customCategories));
                     console.log('📁 Loaded folders:', Object.keys(folders));
-                    updateFoldersAndProgramsList();
+                    updateFoldersAndCategoriesList();
                     
                     // Set up real-time listener
                     newDataRef.on('value', (snapshot) => {
                         const data = snapshot.val();
                         if (data) {
-                            customPrograms = data.programs || {};
+                            customCategories = data.programs || {};
                             folders = data.folders || {};
                             console.log('🔄 Data updated');
-                            updateFoldersAndProgramsList();
+                            updateFoldersAndCategoriesList();
                         }
                     });
                 } else {
@@ -1018,27 +1018,27 @@
                         
                         if (oldData) {
                             console.log('🔄 Migrating old data to new structure...');
-                            customPrograms = oldData;
+                            customCategories = oldData;
                             folders = {}; // No folders in old structure
                             
                             // Save to new structure
                             const migratedData = {
-                                programs: customPrograms,
+                                programs: customCategories,
                                 folders: folders
                             };
                             
                             newDataRef.set(migratedData).then(() => {
                                 console.log('✅ Migration complete!');
-                                updateFoldersAndProgramsList();
+                                updateFoldersAndCategoriesList();
                                 
                                 // Set up real-time listener on new path
                                 newDataRef.on('value', (snapshot) => {
                                     const data = snapshot.val();
                                     if (data) {
-                                        customPrograms = data.programs || {};
+                                        customCategories = data.programs || {};
                                         folders = data.folders || {};
                                         console.log('🔄 Data updated');
-                                        updateFoldersAndProgramsList();
+                                        updateFoldersAndCategoriesList();
                                     }
                                 });
                             }).catch((error) => {
@@ -1046,9 +1046,9 @@
                             });
                         } else {
                             console.log('ℹ️ No data found (starting fresh)');
-                            customPrograms = {};
+                            customCategories = {};
                             folders = {};
-                            updateFoldersAndProgramsList();
+                            updateFoldersAndCategoriesList();
                         }
                     });
                 }
@@ -1076,11 +1076,11 @@
             
             try {
                 console.log('💾 Saving to Firebase...');
-                console.log('📦 Saving', Object.keys(customPrograms).length, 'programs');
-                console.log('📋 Program names:', Object.keys(customPrograms));
+                console.log('📦 Saving', Object.keys(customCategories).length, 'programs');
+                console.log('📋 Program names:', Object.keys(customCategories));
                 
                 // Check data size
-                const dataStr = JSON.stringify(customPrograms);
+                const dataStr = JSON.stringify(customCategories);
                 const dataSizeKB = (dataStr.length / 1024).toFixed(2);
                 console.log('📏 Data size:', dataSizeKB, 'KB');
                 
@@ -1092,7 +1092,7 @@
                 
                 // Save both programs and folders
                 const dataToSave = {
-                    programs: customPrograms,
+                    programs: customCategories,
                     folders: folders
                 };
                 
@@ -1581,7 +1581,7 @@
             document.getElementById('maxRoundsInput').value = settings.maxRounds === -1 ? '' : settings.maxRounds;
             
             // Update custom programs list
-            updateCustomProgramsList();
+            updateCustomCategoriesList();
         }
         
         function closeSettings() {
@@ -1610,21 +1610,21 @@
         function createNewProgram() {
             console.log('createNewProgram called');
             currentEditingProgram = null;
-            document.getElementById('programNameInput').value = '';
-            document.getElementById('programImagesList').innerHTML = '';
-            document.getElementById('programModalTitle').textContent = 'Create New Program';
+            document.getElementById('categoryNameInput').value = '';
+            document.getElementById('categoryImagesList').innerHTML = '';
+            document.getElementById('categoryModalTitle').textContent = 'Create New Program';
             
             // Populate folder dropdown
             populateFolderDropdown();
             
             document.getElementById('settingsModal').classList.remove('show');
             setTimeout(() => {
-                document.getElementById('programModal').classList.add('show');
+                document.getElementById('categoryModal').classList.add('show');
             }, 100);
         }
         
         function populateFolderDropdown() {
-            const select = document.getElementById('programFolderSelect');
+            const select = document.getElementById('categoryFolderSelect');
             select.innerHTML = '<option value="">No folder (ungrouped)</option>';
             
             Object.keys(folders).forEach(folderName => {
@@ -1635,17 +1635,17 @@
             });
         }
         
-        function editProgram(programName) {
-            console.log('editProgram called:', programName);
-            currentEditingProgram = programName;
-            document.getElementById('programNameInput').value = programName;
-            document.getElementById('programModalTitle').textContent = 'Edit Program: ' + programName;
+        function editProgram(categoryName) {
+            console.log('editProgram called:', categoryName);
+            currentEditingProgram = categoryName;
+            document.getElementById('categoryNameInput').value = categoryName;
+            document.getElementById('categoryModalTitle').textContent = 'Edit Program: ' + categoryName;
             
             // Display current images
-            const imagesList = document.getElementById('programImagesList');
+            const imagesList = document.getElementById('categoryImagesList');
             imagesList.innerHTML = '';
             
-            customPrograms[programName].forEach((card, index) => {
+            customCategories[categoryName].forEach((card, index) => {
                 const imgDiv = document.createElement('div');
                 imgDiv.className = 'uploaded-image';
                 imgDiv.dataset.imageData = card.image;
@@ -1664,7 +1664,7 @@
                 removeBtn.textContent = '×';
                 removeBtn.onclick = function(e) {
                     e.stopPropagation();
-                    removeProgramImage(programName, index);
+                    removeProgramImage(categoryName, index);
                 };
                 
                 const labelDiv = document.createElement('div');
@@ -1738,13 +1738,13 @@
             
             document.getElementById('settingsModal').classList.remove('show');
             setTimeout(() => {
-                document.getElementById('programModal').classList.add('show');
+                document.getElementById('categoryModal').classList.add('show');
             }, 100);
         }
         
         function closeProgramModal() {
             console.log('closeProgramModal called');
-            document.getElementById('programModal').classList.remove('show');
+            document.getElementById('categoryModal').classList.remove('show');
             setTimeout(() => {
                 document.getElementById('settingsModal').classList.add('show');
             }, 100);
@@ -1850,7 +1850,7 @@
         function handleProgramImageUpload(event) {
             console.log('handleProgramImageUpload called', event.target.files.length, 'files');
             const files = event.target.files;
-            const imagesList = document.getElementById('programImagesList');
+            const imagesList = document.getElementById('categoryImagesList');
             
             if (!files || files.length === 0) {
                 console.log('No files selected');
@@ -1926,31 +1926,31 @@
             event.target.value = '';
         }
         
-        function removeProgramImage(programName, index) {
+        function removeProgramImage(categoryName, index) {
             if (confirm('Remove this image?')) {
-                customPrograms[programName].splice(index, 1);
-                if (customPrograms[programName].length === 0) {
-                    delete customPrograms[programName];
+                customCategories[categoryName].splice(index, 1);
+                if (customCategories[categoryName].length === 0) {
+                    delete customCategories[categoryName];
                     closeProgramModal();
-                    updateCustomProgramsList();
+                    updateCustomCategoriesList();
                 } else {
-                    editProgram(programName);
+                    editProgram(categoryName);
                 }
             }
         }
         
         async function saveProgramChanges() {
             console.log('saveProgramChanges called');
-            const programName = document.getElementById('programNameInput').value.trim();
-            console.log('Program name:', programName);
+            const categoryName = document.getElementById('categoryNameInput').value.trim();
+            console.log('Program name:', categoryName);
             
-            if (!programName) {
+            if (!categoryName) {
                 alert('Please enter a program name!');
                 return;
             }
             
             // Collect all images from the UI
-            const imagesList = document.getElementById('programImagesList');
+            const imagesList = document.getElementById('categoryImagesList');
             const images = [];
             
             console.log('Images in list:', imagesList.children.length);
@@ -1972,27 +1972,27 @@
             }
             
             // If renaming, delete old program
-            if (currentEditingProgram && currentEditingProgram !== programName) {
-                console.log('Renaming from', currentEditingProgram, 'to', programName);
-                delete customPrograms[currentEditingProgram];
+            if (currentEditingProgram && currentEditingProgram !== categoryName) {
+                console.log('Renaming from', currentEditingProgram, 'to', categoryName);
+                delete customCategories[currentEditingProgram];
             }
             
-            customPrograms[programName] = images;
-            console.log('Program saved:', programName, 'with', images.length, 'images');
+            customCategories[categoryName] = images;
+            console.log('Program saved:', categoryName, 'with', images.length, 'images');
             
             // Add to selected folder
-            const selectedFolder = document.getElementById('programFolderSelect').value;
+            const selectedFolder = document.getElementById('categoryFolderSelect').value;
             if (selectedFolder) {
                 if (!folders[selectedFolder]) {
                     folders[selectedFolder] = [];
                 }
-                if (!folders[selectedFolder].includes(programName)) {
-                    folders[selectedFolder].push(programName);
+                if (!folders[selectedFolder].includes(categoryName)) {
+                    folders[selectedFolder].push(categoryName);
                 }
             }
             
             // Auto-select this program
-            currentProgram = 'custom:' + programName;
+            currentProgram = 'custom:' + categoryName;
             uploadedCards = images;
             
             // Save to persistent storage and wait for result
@@ -2002,7 +2002,7 @@
             if (success) {
                 console.log('✅ saveProgramChanges: Save confirmed successful');
                 closeProgramModal();
-                updateCustomProgramsList();
+                updateCustomCategoriesList();
                 closeSettings();
                 resetGame();
             } else {
@@ -2018,19 +2018,19 @@
             }
             
             if (confirm(`Delete the "${currentEditingProgram}" program? This cannot be undone.`)) {
-                delete customPrograms[currentEditingProgram];
+                delete customCategories[currentEditingProgram];
                 saveProgramsToStorage();
                 closeProgramModal();
-                updateCustomProgramsList();
+                updateCustomCategoriesList();
             }
         }
         
-        function updateFoldersAndProgramsList() {
-            const container = document.getElementById('customProgramsList');
+        function updateFoldersAndCategoriesList() {
+            const container = document.getElementById('customCategoriesList');
             container.innerHTML = '';
             
             // Check if we should show restore button
-            const hasNoData = Object.keys(customPrograms).length === 0 && Object.keys(folders).length === 0;
+            const hasNoData = Object.keys(customCategories).length === 0 && Object.keys(folders).length === 0;
             if (hasNoData && database) {
                 // Check for old data
                 database.ref('flashcard-programs').once('value').then((snapshot) => {
@@ -2053,29 +2053,29 @@
                 backBtn.textContent = `⬅️ Back to Folders`;
                 backBtn.onclick = () => {
                     currentFolder = null;
-                    updateFoldersAndProgramsList();
+                    updateFoldersAndCategoriesList();
                 };
                 container.appendChild(backBtn);
                 
                 // Show programs in this folder
-                const programsInFolder = folders[currentFolder] || [];
+                const categoriesInFolder = folders[currentFolder] || [];
                 
-                if (programsInFolder.length === 0) {
+                if (categoriesInFolder.length === 0) {
                     container.innerHTML += '<p style="text-align: center; color: #999; padding: 20px;">No programs in this folder yet</p>';
                 } else {
-                    programsInFolder.forEach(programName => {
-                        if (customPrograms[programName]) {
-                            const programDiv = document.createElement('div');
-                            programDiv.style.display = 'flex';
-                            programDiv.style.gap = '10px';
-                            programDiv.style.marginBottom = '10px';
+                    categoriesInFolder.forEach(categoryName => {
+                        if (customCategories[categoryName]) {
+                            const categoryDiv = document.createElement('div');
+                            categoryDiv.style.display = 'flex';
+                            categoryDiv.style.gap = '10px';
+                            categoryDiv.style.marginBottom = '10px';
                             
                             // Use program button
                             const useBtn = document.createElement('button');
                             useBtn.className = 'program-btn';
                             useBtn.style.flex = '1';
-                            useBtn.textContent = `🎴 ${programName} (${customPrograms[programName].length} images)`;
-                            useBtn.onclick = () => useCustomProgram(programName);
+                            useBtn.textContent = `🎴 ${categoryName} (${customCategories[categoryName].length} images)`;
+                            useBtn.onclick = () => useCustomProgram(categoryName);
                             
                             // Remove from folder button
                             const removeBtn = document.createElement('button');
@@ -2084,7 +2084,7 @@
                             removeBtn.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100())';
                             removeBtn.textContent = '➖';
                             removeBtn.title = 'Remove from folder';
-                            removeBtn.onclick = () => removeProgramFromFolder(programName, currentFolder);
+                            removeBtn.onclick = () => removeProgramFromFolder(categoryName, currentFolder);
                             
                             // Edit button
                             const editBtn = document.createElement('button');
@@ -2092,24 +2092,24 @@
                             editBtn.style.flex = '0 0 60px';
                             editBtn.style.background = 'linear-gradient(135deg, #ffd93d 0%, #ff8c42 100%)';
                             editBtn.textContent = '✏️';
-                            editBtn.onclick = () => editProgram(programName);
+                            editBtn.onclick = () => editProgram(categoryName);
                             
-                            programDiv.appendChild(useBtn);
-                            programDiv.appendChild(removeBtn);
-                            programDiv.appendChild(editBtn);
-                            container.appendChild(programDiv);
+                            categoryDiv.appendChild(useBtn);
+                            categoryDiv.appendChild(removeBtn);
+                            categoryDiv.appendChild(editBtn);
+                            container.appendChild(categoryDiv);
                         }
                     });
                 }
             } else {
                 // Show folder list OR ungrouped programs
                 const folderKeys = Object.keys(folders);
-                const programKeys = Object.keys(customPrograms);
+                const categoryKeys = Object.keys(customCategories);
                 
                 // Get programs that aren't in any folder
-                const programsInFolders = new Set();
-                Object.values(folders).forEach(cats => cats.forEach(cat => programsInFolders.add(cat)));
-                const ungroupedPrograms = programKeys.filter(cat => !programsInFolders.has(cat));
+                const categoriesInFolders = new Set();
+                Object.values(folders).forEach(cats => cats.forEach(cat => categoriesInFolders.add(cat)));
+                const ungroupedPrograms = categoryKeys.filter(cat => !categoriesInFolders.has(cat));
                 
                 // Show folders first
                 if (folderKeys.length > 0) {
@@ -2127,7 +2127,7 @@
                         openBtn.textContent = `📁 ${folderName} (${programCount} programs)`;
                         openBtn.onclick = () => {
                             currentFolder = folderName;
-                            updateFoldersAndProgramsList();
+                            updateFoldersAndCategoriesList();
                         };
                         
                         // Delete folder button
@@ -2155,18 +2155,18 @@
                         container.appendChild(divider);
                     }
                     
-                    ungroupedPrograms.forEach(programName => {
-                        const programDiv = document.createElement('div');
-                        programDiv.style.display = 'flex';
-                        programDiv.style.gap = '10px';
-                        programDiv.style.marginBottom = '10px';
+                    ungroupedPrograms.forEach(categoryName => {
+                        const categoryDiv = document.createElement('div');
+                        categoryDiv.style.display = 'flex';
+                        categoryDiv.style.gap = '10px';
+                        categoryDiv.style.marginBottom = '10px';
                         
                         // Use program button
                         const useBtn = document.createElement('button');
                         useBtn.className = 'program-btn';
                         useBtn.style.flex = '1';
-                        useBtn.textContent = `🎴 ${programName} (${customPrograms[programName].length} images)`;
-                        useBtn.onclick = () => useCustomProgram(programName);
+                        useBtn.textContent = `🎴 ${categoryName} (${customCategories[categoryName].length} images)`;
+                        useBtn.onclick = () => useCustomProgram(categoryName);
                         
                         // Move to folder button
                         const folderBtn = document.createElement('button');
@@ -2175,7 +2175,7 @@
                         folderBtn.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
                         folderBtn.textContent = '📁';
                         folderBtn.title = 'Move to folder';
-                        folderBtn.onclick = () => assignProgramToFolder(programName);
+                        folderBtn.onclick = () => assignProgramToFolder(categoryName);
                         
                         // Edit button
                         const editBtn = document.createElement('button');
@@ -2183,12 +2183,12 @@
                         editBtn.style.flex = '0 0 60px';
                         editBtn.style.background = 'linear-gradient(135deg, #ffd93d 0%, #ff8c42 100%)';
                         editBtn.textContent = '✏️';
-                        editBtn.onclick = () => editProgram(programName);
+                        editBtn.onclick = () => editProgram(categoryName);
                         
-                        programDiv.appendChild(useBtn);
-                        programDiv.appendChild(folderBtn);
-                        programDiv.appendChild(editBtn);
-                        container.appendChild(programDiv);
+                        categoryDiv.appendChild(useBtn);
+                        categoryDiv.appendChild(folderBtn);
+                        categoryDiv.appendChild(editBtn);
+                        container.appendChild(categoryDiv);
                     });
                 }
                 
@@ -2209,7 +2209,7 @@
                 }
                 folders[trimmedName] = [];
                 saveProgramsToStorage();
-                updateFoldersAndProgramsList();
+                updateFoldersAndCategoriesList();
             }
         }
         
@@ -2217,7 +2217,7 @@
             if (confirm(`Delete folder "${folderName}"? Programs inside will not be deleted, just ungrouped.`)) {
                 delete folders[folderName];
                 saveProgramsToStorage();
-                updateFoldersAndProgramsList();
+                updateFoldersAndCategoriesList();
             }
         }
         
@@ -2235,14 +2235,14 @@
                 
                 if (oldData) {
                     console.log('✅ Found old data:', Object.keys(oldData));
-                    customPrograms = oldData;
+                    customCategories = oldData;
                     folders = {};
                     
                     // Save to new location
                     await saveProgramsToStorage();
                     
                     alert('Programs restored! They appear in the "ungrouped" section. You can now create folders to organize them.');
-                    updateFoldersAndProgramsList();
+                    updateFoldersAndCategoriesList();
                     
                     // Hide restore button
                     document.getElementById('restoreOldDataBtn').style.display = 'none';
@@ -2257,7 +2257,7 @@
         
         let pendingProgramToMove = null; // Track which program is being moved
         
-        async function assignProgramToFolder(programName) {
+        async function assignProgramToFolder(categoryName) {
             const folderKeys = Object.keys(folders);
             
             if (folderKeys.length === 0) {
@@ -2266,10 +2266,10 @@
             }
             
             // Set pending program
-            pendingProgramToMove = programName;
+            pendingProgramToMove = categoryName;
             
             // Update message
-            document.getElementById('folderSelectMessage').textContent = `Move "${programName}" to which folder?`;
+            document.getElementById('folderSelectMessage').textContent = `Move "${categoryName}" to which folder?`;
             
             // Populate dropdown
             const dropdown = document.getElementById('folderSelectDropdown');
@@ -2295,41 +2295,41 @@
             if (!pendingProgramToMove) return;
             
             const selectedFolder = document.getElementById('folderSelectDropdown').value;
-            const programName = pendingProgramToMove;
+            const categoryName = pendingProgramToMove;
             
             // Add program to folder
             if (!folders[selectedFolder]) {
                 folders[selectedFolder] = [];
             }
             
-            if (!folders[selectedFolder].includes(programName)) {
-                folders[selectedFolder].push(programName);
+            if (!folders[selectedFolder].includes(categoryName)) {
+                folders[selectedFolder].push(categoryName);
                 await saveProgramsToStorage();
                 closeFolderSelectModal();
-                updateFoldersAndProgramsList();
+                updateFoldersAndCategoriesList();
             } else {
-                alert(`"${programName}" is already in "${selectedFolder}"`);
+                alert(`"${categoryName}" is already in "${selectedFolder}"`);
             }
         }
         
-        async function removeProgramFromFolder(programName, folderName) {
-            if (confirm(`Remove "${programName}" from folder "${folderName}"?\n\nThe program will move to "Ungrouped Programs".`)) {
+        async function removeProgramFromFolder(categoryName, folderName) {
+            if (confirm(`Remove "${categoryName}" from folder "${folderName}"?\n\nThe program will move to "Ungrouped Programs".`)) {
                 if (folders[folderName]) {
-                    folders[folderName] = folders[folderName].filter(cat => cat !== programName);
+                    folders[folderName] = folders[folderName].filter(cat => cat !== categoryName);
                     await saveProgramsToStorage();
-                    updateFoldersAndProgramsList();
+                    updateFoldersAndCategoriesList();
                 }
             }
         }
         
         // Keep old function for backward compatibility but redirect to new one
-        function updateCustomProgramsList() {
-            updateFoldersAndProgramsList();
+        function updateCustomCategoriesList() {
+            updateFoldersAndCategoriesList();
         }
         
-        function useCustomProgram(programName) {
-            currentProgram = 'custom:' + programName;
-            uploadedCards = customPrograms[programName];
+        function useCustomProgram(categoryName) {
+            currentProgram = 'custom:' + categoryName;
+            uploadedCards = customCategories[categoryName];
             closeSettings();
             resetGame();
         }
