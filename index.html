@@ -985,7 +985,7 @@
             
             console.log('📥 Loading data from Firebase...');
             const newDataRef = database.ref('flashcard-data');
-            const oldDataRef = database.ref('flashcard-programs');
+            const oldDataRef = database.ref('flashcard-categories');
             
             // First check if new data exists
             newDataRef.once('value').then((snapshot) => {
@@ -2033,7 +2033,7 @@
             const hasNoData = Object.keys(customCategories).length === 0 && Object.keys(folders).length === 0;
             if (hasNoData && database) {
                 // Check for old data
-                database.ref('flashcard-programs').once('value').then((snapshot) => {
+                database.ref('flashcard-categories').once('value').then((snapshot) => {
                     if (snapshot.val() && Object.keys(snapshot.val()).length > 0) {
                         document.getElementById('restoreOldDataBtn').style.display = 'block';
                     }
@@ -2227,7 +2227,7 @@
             }
             
             console.log('🔄 Manually restoring old data...');
-            const oldDataRef = database.ref('flashcard-programs');
+            const oldDataRef = database.ref('flashcard-categories');
             
             try {
                 const snapshot = await oldDataRef.once('value');
