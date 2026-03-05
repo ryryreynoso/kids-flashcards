@@ -2727,12 +2727,16 @@
         const snapshot = await ref.once('value');
         const data = snapshot.val();
         
+        console.log('📦 Raw Firebase data:', data);
+        
         if (data) {
             customCategories = data.categories || {};
             folders = data.folders || {};
             
             console.log('✅ FORCE LOADED categories:', Object.keys(customCategories).length);
             console.log('✅ FORCE LOADED folders:', Object.keys(folders).length);
+            console.log('📂 Category names:', Object.keys(customCategories));
+            console.log('📁 Folder names:', Object.keys(folders));
             
             // Update localStorage
             try {
@@ -2744,9 +2748,11 @@
             updateFoldersAndCategoriesList();
             showFolderSelectionScreen();
             
-            alert('✅ Reloaded!\n\nCategories: ' + Object.keys(customCategories).length + '\nFolders: ' + Object.keys(folders).length);
+            const catNames = Object.keys(customCategories).join(', ') || 'NONE';
+            const folderNames = Object.keys(folders).join(', ') || 'NONE';
+            alert(`✅ Reloaded!\n\nCategories: ${Object.keys(customCategories).length}\nNames: ${catNames}\n\nFolders: ${Object.keys(folders).length}\nNames: ${folderNames}`);
         } else {
-            alert('❌ No data found in Firebase!');
+            alert('❌ NO DATA IN FIREBASE!\n\nGo to Firebase Console and check if flashcard-data exists.');
         }
     }
     
