@@ -2085,6 +2085,15 @@
                             useBtn.textContent = `🎴 ${categoryName} (${customCategories[categoryName].length} images)`;
                             useBtn.onclick = () => useCustomCategory(categoryName);
                             
+                            // Remove from folder button
+                            const removeBtn = document.createElement('button');
+                            removeBtn.className = 'category-btn';
+                            removeBtn.style.flex = '0 0 60px';
+                            removeBtn.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100())';
+                            removeBtn.textContent = '➖';
+                            removeBtn.title = 'Remove from folder';
+                            removeBtn.onclick = () => removeCategoryFromFolder(categoryName, currentFolder);
+                            
                             // Edit button
                             const editBtn = document.createElement('button');
                             editBtn.className = 'category-btn';
@@ -2094,6 +2103,7 @@
                             editBtn.onclick = () => editCategory(categoryName);
                             
                             categoryDiv.appendChild(useBtn);
+                            categoryDiv.appendChild(removeBtn);
                             categoryDiv.appendChild(editBtn);
                             container.appendChild(categoryDiv);
                         }
@@ -2166,15 +2176,25 @@
                         useBtn.textContent = `🎴 ${categoryName} (${customCategories[categoryName].length} images)`;
                         useBtn.onclick = () => useCustomCategory(categoryName);
                         
+                        // Move to folder button
+                        const folderBtn = document.createElement('button');
+                        folderBtn.className = 'category-btn';
+                        folderBtn.style.flex = '0 0 60px';
+                        folderBtn.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+                        folderBtn.textContent = '📁';
+                        folderBtn.title = 'Move to folder';
+                        folderBtn.onclick = () => assignCategoryToFolder(categoryName);
+                        
                         // Edit button
                         const editBtn = document.createElement('button');
                         editBtn.className = 'category-btn';
                         editBtn.style.flex = '0 0 60px';
-                        editBtn.style.background = 'linear-gradient(135deg, #ffd93d 0%, #ff8c42 100())';
+                        editBtn.style.background = 'linear-gradient(135deg, #ffd93d 0%, #ff8c42 100%)';
                         editBtn.textContent = '✏️';
                         editBtn.onclick = () => editCategory(categoryName);
                         
                         categoryDiv.appendChild(useBtn);
+                        categoryDiv.appendChild(folderBtn);
                         categoryDiv.appendChild(editBtn);
                         container.appendChild(categoryDiv);
                     });
@@ -2240,6 +2260,58 @@
             } catch (error) {
                 console.error('❌ Restore failed:', error);
                 alert('Failed to restore: ' + error.message);
+            }
+        }
+        
+        async function assignCategoryToFolder(categoryName) {
+            const folderKeys = Object.keys(folders);
+            
+            if (folderKeys.length === 0) {
+                alert('No folders exist yet! Create a folder first, then assign categories to it.');
+                return;
+            }
+            
+            // Create selection dialog
+            let message = `Move "${categoryName}" to which folder?\n\n`;
+            folderKeys.forEach((folder, index) => {
+                message += `${index + 1}. ${folder}\n`;
+            });
+            message += '\nEnter the number of the folder:';
+            
+            const choice = prompt(message);
+            
+            if (choice === null) return; // Cancelled
+            
+            const folderIndex = parseInt(choice) - 1;
+            
+            if (folderIndex >= 0 && folderIndex < folderKeys.length) {
+                const selectedFolder = folderKeys[folderIndex];
+                
+                // Add category to folder
+                if (!folders[selectedFolder]) {
+                    folders[selectedFolder] = [];
+                }
+                
+                if (!folders[selectedFolder].includes(categoryName)) {
+                    folders[selectedFolder].push(categoryName);
+                    await saveCategoriesToStorage();
+                    alert(`✅ Moved "${categoryName}" to folder "${selectedFolder}"!`);
+                    updateFoldersAndCategoriesList();
+                } else {
+                    alert(`"${categoryName}" is already in "${selectedFolder}"`);
+                }
+            } else {
+                alert('Invalid selection. Please try again.');
+            }
+        }
+        
+        async function removeCategoryFromFolder(categoryName, folderName) {
+            if (confirm(`Remove "${categoryName}" from folder "${folderName}"?\n\nThe category will move to "Ungrouped Categories".`)) {
+                if (folders[folderName]) {
+                    folders[folderName] = folders[folderName].filter(cat => cat !== categoryName);
+                    await saveCategoriesToStorage();
+                    updateFoldersAndCategoriesList();
+                }
             }
         }
         
