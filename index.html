@@ -1608,9 +1608,8 @@
                 container.innerHTML = '';
                 controls.style.display = 'flex'; // Show controls with settings button
                 
-                // Apply layout class based on orientation
-                const isLandscape = window.innerWidth > window.innerHeight;
-                container.className = 'cards-container ' + (isLandscape ? 'horizontal' : settings.cardLayout);
+                // Apply horizontal layout
+                container.className = 'cards-container horizontal';
                 
                 currentCards.forEach((card, index) => {
                     console.log('Rendering card', index, ':', card);
@@ -1681,9 +1680,8 @@
             // Force reflow to ensure all styles are cleared
             void container.offsetHeight;
             
-            // Apply layout class based on orientation
-            const isLandscape = window.innerWidth > window.innerHeight;
-            container.className = 'cards-container ' + (isLandscape ? 'horizontal' : settings.cardLayout);
+            // Apply horizontal layout
+            container.className = 'cards-container horizontal';
             
             // Show round indicator if limited rounds
             if (settings.maxTrials > 0) {
@@ -2755,8 +2753,11 @@
                     return;
                 }
                 folders[trimmedName] = [];
+                console.log('📁 Creating folder:', trimmedName);
                 saveProgramsToStorage();
                 updateFoldersAndCategoriesList();
+                showFolderSelectionScreen(); // Update main screen too
+                console.log('✅ Folder created and saved');
             }
         }
         
@@ -2912,9 +2913,15 @@
         function useCustomProgram(categoryName) {
             currentCategory = 'custom:' + categoryName;
             uploadedCards = customCategories[categoryName];
-            selectRandomCards();
             closeSettings();
-            showSetupScreen();
+            
+            // If 4+ images, show photo selection; otherwise go straight to setup
+            if (customCategories[categoryName].length > 3) {
+                showPhotoSelectionScreen(categoryName);
+            } else {
+                selectRandomCards();
+                showSetupScreen();
+            }
         }
         
         // Add shake animation
