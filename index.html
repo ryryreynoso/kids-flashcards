@@ -1630,8 +1630,9 @@
             container.innerHTML = '';
             controls.style.display = 'flex'; // Show controls with settings button
             
-            // Apply layout class
-            container.className = 'cards-container ' + settings.cardLayout;
+            // Apply layout class based on orientation
+            const isLandscape = window.innerWidth > window.innerHeight;
+            container.className = 'cards-container ' + (isLandscape ? 'horizontal' : settings.cardLayout);
             
             currentCards.forEach((card, index) => {
                 console.log('Rendering card', index, ':', card);
@@ -1702,8 +1703,9 @@
         // Force reflow to ensure all styles are cleared
         void container.offsetHeight;
         
-        // Apply layout class
-        container.className = 'cards-container ' + settings.cardLayout;
+        // Apply layout class based on orientation
+        const isLandscape = window.innerWidth > window.innerHeight;
+        container.className = 'cards-container ' + (isLandscape ? 'horizontal' : settings.cardLayout);
         
         // Show round indicator if limited rounds
         if (settings.maxTrials > 0) {
@@ -2841,6 +2843,34 @@
         }
     `;
     document.head.appendChild(style);
+    
+    // Force layout update on orientation change
+    function updateLayoutForOrientation() {
+        const container = document.getElementById('cardsContainer');
+        if (!container) return;
+        
+        const isLandscape = window.innerWidth > window.innerHeight;
+        
+        if (isLandscape) {
+            // Force horizontal in landscape
+            container.classList.remove('vertical');
+            container.classList.add('horizontal');
+        } else {
+            // Use user preference in portrait
+            container.classList.remove('horizontal');
+            container.classList.add(settings.cardLayout);
+        }
+    }
+    
+    // Listen for orientation changes
+    window.addEventListener('orientationchange', () => {
+        setTimeout(updateLayoutForOrientation, 100);
+    });
+    
+    // Also listen for resize (for desktop/simulator)
+    window.addEventListener('resize', () => {
+        updateLayoutForOrientation();
+    });
     
     // Initialize
     createStars();
