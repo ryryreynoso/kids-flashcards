@@ -120,6 +120,7 @@
         
         .cards-container {
             display: flex;
+            flex-direction: row; /* DEFAULT TO HORIZONTAL */
             justify-content: center;
             align-items: center;
             gap: 20px;
@@ -1610,6 +1611,8 @@
                 
                 // Apply horizontal layout
                 container.className = 'cards-container horizontal';
+                console.log('🎨 Applied className:', container.className);
+                console.log('🎨 Container flex-direction:', window.getComputedStyle(container).flexDirection);
                 
                 currentCards.forEach((card, index) => {
                     console.log('Rendering card', index, ':', card);
