@@ -26,6 +26,15 @@
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Chewy&display=swap');
     
+    html {
+        height: 100%;
+        height: -webkit-fill-available;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    
     * {
         margin: 0;
         padding: 0;
@@ -42,10 +51,12 @@
         font-family: 'Fredoka', sans-serif;
         background: linear-gradient(135deg, #1e3a5f 0%, #2a5298 50%, #3d7bc7 100%);
         min-height: 100vh;
-        min-height: -webkit-fill-available; /* iOS fix */
+        min-height: -webkit-fill-available;
+        height: 100%;
         width: 100vw;
         margin: 0;
         padding: 0;
+        padding-bottom: env(safe-area-inset-bottom); /* iOS safe area */
         overflow-x: hidden;
         overflow-y: auto;
         position: relative;
@@ -55,10 +66,12 @@
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
+        width: 100vw;
+        height: 100vh;
+        height: -webkit-fill-available;
         pointer-events: none;
         z-index: 1;
+        background: inherit; /* Inherit gradient from body */
     }
     
     .star {
@@ -198,6 +211,22 @@
             max-width: 350px;
             max-height: 350px;
         }
+        
+        .cards-container,
+        .cards-container.horizontal,
+        .cards-container.vertical {
+            flex-direction: column !important;
+        }
+    }
+    
+    /* iPad portrait - slightly bigger cards */
+    @media (min-width: 768px) and (orientation: portrait) {
+        .card {
+            width: calc(60vw - 30px);
+            height: calc(60vw - 30px);
+            max-width: 400px;
+            max-height: 400px;
+        }
     }
     
     /* Small phone landscape - even smaller to fit */
@@ -315,6 +344,7 @@
     }
     
     /* iPad and tablet landscape mode - FORCE horizontal layout */
+    /* iPad landscape - responsive sizing to fit 3 cards */
     @media (min-width: 768px) and (orientation: landscape) {
         .cards-container,
         .cards-container.vertical,
@@ -325,8 +355,12 @@
         }
         
         .card {
-            width: 280px;
-            height: 280px;
+            width: calc(28vw - 25px);  /* 28% each = 84% total, fits 3 easily */
+            height: calc(28vw - 25px);
+            max-width: 320px;
+            max-height: 320px;
+            min-width: 200px;
+            min-height: 200px;
         }
         
         .cards-container {
@@ -334,11 +368,15 @@
         }
     }
     
-    /* iPad Pro landscape - bigger cards */
+    /* iPad Pro landscape - bigger cards with more room */
     @media (min-width: 1024px) and (orientation: landscape) {
         .card {
-            width: 320px;
-            height: 320px;
+            width: calc(30vw - 30px);  /* iPad Pro is wider, can fit bigger cards */
+            height: calc(30vw - 30px);
+            max-width: 350px;
+            max-height: 350px;
+            min-width: 250px;
+            min-height: 250px;
         }
     }
     
