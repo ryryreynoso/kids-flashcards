@@ -122,7 +122,7 @@
     
     .cards-container {
         display: flex;
-        flex-direction: row !important; /* FORCE HORIZONTAL */
+        /* flex-direction set dynamically by JavaScript based on orientation */
         justify-content: center;
         align-items: center;
         gap: 2vw;  /* Responsive gap - 2% of viewport width */
@@ -1628,15 +1628,26 @@
             container.innerHTML = '';
             controls.style.display = 'flex'; // Show controls with settings button
             
-            // Apply horizontal layout - cards auto-resize
-            container.className = 'cards-container horizontal';
-            container.style.flexDirection = 'row';
+            // Detect orientation and set layout accordingly
+            const isLandscape = window.innerWidth > window.innerHeight;
+            
+            if (isLandscape) {
+                // LANDSCAPE = HORIZONTAL (side by side)
+                container.className = 'cards-container horizontal';
+                container.style.flexDirection = 'row';
+            } else {
+                // PORTRAIT = VERTICAL (stacked)
+                container.className = 'cards-container vertical';
+                container.style.flexDirection = 'column';
+            }
+            
             container.style.display = 'flex';
-            container.style.flexWrap = 'wrap'; // Allow wrap since cards resize
+            container.style.flexWrap = 'wrap';
             container.style.justifyContent = 'center';
+            
+            console.log('🎨 Orientation:', isLandscape ? 'LANDSCAPE (horizontal)' : 'PORTRAIT (vertical)');
             console.log('🎨 Applied className:', container.className);
-            console.log('🎨 Inline flexDirection:', container.style.flexDirection);
-            console.log('🎨 Container flex-direction:', window.getComputedStyle(container).flexDirection);
+            console.log('🎨 Flex direction:', container.style.flexDirection);
             
             currentCards.forEach((card, index) => {
                 console.log('Rendering card', index, ':', card);
@@ -1707,9 +1718,19 @@
         // Force reflow to ensure all styles are cleared
         void container.offsetHeight;
         
-        // Apply horizontal layout - cards auto-resize
-        container.className = 'cards-container horizontal';
-        container.style.flexDirection = 'row';
+        // Detect orientation and set layout accordingly
+        const isLandscape = window.innerWidth > window.innerHeight;
+        
+        if (isLandscape) {
+            // LANDSCAPE = HORIZONTAL (side by side)
+            container.className = 'cards-container horizontal';
+            container.style.flexDirection = 'row';
+        } else {
+            // PORTRAIT = VERTICAL (stacked)
+            container.className = 'cards-container vertical';
+            container.style.flexDirection = 'column';
+        }
+        
         container.style.display = 'flex';
         container.style.flexWrap = 'wrap';
         container.style.justifyContent = 'center';
@@ -2982,18 +3003,20 @@
         }
         
         const isLandscape = window.innerWidth > window.innerHeight;
-        console.log(`📱 Orientation: ${isLandscape ? 'LANDSCAPE' : 'PORTRAIT'} (${window.innerWidth}x${window.innerHeight})`);
+        console.log(`📱 Orientation changed: ${isLandscape ? 'LANDSCAPE' : 'PORTRAIT'} (${window.innerWidth}x${window.innerHeight})`);
         
         if (isLandscape) {
-            // Force horizontal in landscape
-            console.log('➡️ Setting HORIZONTAL layout');
+            // LANDSCAPE = HORIZONTAL (side by side)
+            console.log('➡️ Setting HORIZONTAL layout (row)');
             container.classList.remove('vertical');
             container.classList.add('horizontal');
+            container.style.flexDirection = 'row';
         } else {
-            // Use user preference in portrait
-            console.log(`⬇️ Setting ${settings.cardLayout.toUpperCase()} layout`);
+            // PORTRAIT = VERTICAL (stacked)
+            console.log('⬇️ Setting VERTICAL layout (column)');
             container.classList.remove('horizontal');
-            container.classList.add(settings.cardLayout);
+            container.classList.add('vertical');
+            container.style.flexDirection = 'column';
         }
     }
     
