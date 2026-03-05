@@ -1426,6 +1426,11 @@
     }
     
     function showFolderSelectionScreen() {
+        console.log('🔍 showFolderSelectionScreen called');
+        console.log('📊 folders:', folders);
+        console.log('📊 customCategories:', customCategories);
+        console.log('📊 Object.keys(folders):', Object.keys(folders));
+        
         const container = document.getElementById('cardsContainer');
         const promptText = document.getElementById('promptText');
         const trialIndicator = document.getElementById('trialIndicator');
@@ -1443,6 +1448,8 @@
         container.style.margin = '0 auto';
         
         const folderKeys = Object.keys(folders);
+        console.log('📂 folderKeys.length:', folderKeys.length);
+        console.log('🔥 isFirebaseReady:', isFirebaseReady);
         
         // Don't show "No folders" if Firebase is still loading
         if (folderKeys.length === 0 && isFirebaseReady) {
