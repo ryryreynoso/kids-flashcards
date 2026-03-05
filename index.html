@@ -1210,6 +1210,146 @@
             return newArray;
         }
         
+        function showPhotoSelectionScreen(categoryName) {
+            const container = document.getElementById('cardsContainer');
+            const promptText = document.getElementById('promptText');
+            
+            promptText.textContent = `Select ${settings.numCards} Photos to Use`;
+            
+            container.innerHTML = '';
+            container.style.display = 'flex';
+            container.style.flexWrap = 'wrap';
+            container.style.gap = '15px';
+            container.style.justifyContent = 'center';
+            container.style.padding = '20px';
+            
+            const allPhotos = customCategories[categoryName];
+            let selectedPhotos = [];
+            
+            // Back button
+            const backBtn = document.createElement('button');
+            backBtn.className = 'category-btn';
+            backBtn.style.width = '100%';
+            backBtn.style.fontSize = '18px';
+            backBtn.style.fontWeight = '700';
+            backBtn.style.padding = '18px';
+            backBtn.style.background = 'linear-gradient(135deg, #999 0%, #666 100())';
+            backBtn.style.color = 'white';
+            backBtn.style.borderRadius = '15px';
+            backBtn.style.marginBottom = '10px';
+            backBtn.textContent = '⬅️ Back';
+            backBtn.onclick = () => showFolderPrograms(currentFolder || Object.keys(folders)[0]);
+            container.appendChild(backBtn);
+            
+            // Create grid container for photos
+            const photoGrid = document.createElement('div');
+            photoGrid.style.display = 'grid';
+            photoGrid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(150px, 1fr))';
+            photoGrid.style.gap = '15px';
+            photoGrid.style.width = '100%';
+            photoGrid.style.maxWidth = '800px';
+            
+            allPhotos.forEach((photo, index) => {
+                const photoCard = document.createElement('div');
+                photoCard.style.position = 'relative';
+                photoCard.style.cursor = 'pointer';
+                photoCard.style.borderRadius = '15px';
+                photoCard.style.overflow = 'hidden';
+                photoCard.style.border = '4px solid transparent';
+                photoCard.style.transition = 'all 0.3s ease';
+                photoCard.style.background = 'white';
+                
+                const img = document.createElement('img');
+                img.src = photo.image;
+                img.alt = photo.label;
+                img.style.width = '100%';
+                img.style.height = '150px';
+                img.style.objectFit = 'cover';
+                
+                const label = document.createElement('div');
+                label.style.padding = '10px';
+                label.style.textAlign = 'center';
+                label.style.fontWeight = '700';
+                label.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100())';
+                label.style.color = 'white';
+                label.textContent = photo.label;
+                
+                const checkmark = document.createElement('div');
+                checkmark.style.position = 'absolute';
+                checkmark.style.top = '10px';
+                checkmark.style.right = '10px';
+                checkmark.style.width = '30px';
+                checkmark.style.height = '30px';
+                checkmark.style.borderRadius = '50%';
+                checkmark.style.background = 'white';
+                checkmark.style.display = 'none';
+                checkmark.style.alignItems = 'center';
+                checkmark.style.justifyContent = 'center';
+                checkmark.style.fontSize = '20px';
+                checkmark.textContent = '✓';
+                
+                photoCard.appendChild(img);
+                photoCard.appendChild(label);
+                photoCard.appendChild(checkmark);
+                
+                photoCard.onclick = () => {
+                    const isSelected = selectedPhotos.includes(photo);
+                    
+                    if (isSelected) {
+                        // Deselect
+                        selectedPhotos = selectedPhotos.filter(p => p !== photo);
+                        photoCard.style.border = '4px solid transparent';
+                        checkmark.style.display = 'none';
+                    } else if (selectedPhotos.length < settings.numCards) {
+                        // Select
+                        selectedPhotos.push(photo);
+                        photoCard.style.border = '4px solid #43e97b';
+                        photoCard.style.boxShadow = '0 8px 20px rgba(67, 233, 123, 0.5)';
+                        checkmark.style.display = 'flex';
+                    }
+                    
+                    // Update start button
+                    if (selectedPhotos.length === settings.numCards) {
+                        startBtn.disabled = false;
+                        startBtn.style.opacity = '1';
+                        startBtn.style.cursor = 'pointer';
+                    } else {
+                        startBtn.disabled = true;
+                        startBtn.style.opacity = '0.5';
+                        startBtn.style.cursor = 'not-allowed';
+                    }
+                };
+                
+                photoGrid.appendChild(photoCard);
+            });
+            
+            container.appendChild(photoGrid);
+            
+            // Start button
+            const startBtn = document.createElement('button');
+            startBtn.className = 'category-btn';
+            startBtn.style.width = '100%';
+            startBtn.style.maxWidth = '400px';
+            startBtn.style.fontSize = '20px';
+            startBtn.style.fontWeight = '700';
+            startBtn.style.padding = '20px';
+            startBtn.style.marginTop = '20px';
+            startBtn.style.background = 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100())';
+            startBtn.style.color = 'white';
+            startBtn.style.borderRadius = '18px';
+            startBtn.style.opacity = '0.5';
+            startBtn.style.cursor = 'not-allowed';
+            startBtn.disabled = true;
+            startBtn.textContent = `Start with Selected Photos`;
+            startBtn.onclick = () => {
+                uploadedCards = selectedPhotos;
+                selectRandomCards();
+                showSetupScreen();
+            };
+            
+            container.appendChild(startBtn);
+        }
+        
         function selectRandomCards() {
             console.log('selectRandomCards called');
             console.log('currentProgram:', currentProgram);
@@ -1243,7 +1383,8 @@
             
             const folderKeys = Object.keys(folders);
             
-            if (folderKeys.length === 0) {
+            // Don't show "No folders" if Firebase is still loading
+            if (folderKeys.length === 0 && isFirebaseReady) {
                 // No folders yet - show message and settings button
                 container.innerHTML = `
                     <div style="text-align: center; padding: 40px 20px;">
@@ -1257,6 +1398,15 @@
                                 style="width: 100%; max-width: 400px; font-size: 20px; padding: 20px;">
                             ⚙️ Open Settings to Create Folders
                         </button>
+                    </div>
+                `;
+            } else if (folderKeys.length === 0) {
+                // Still loading - show loading message
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <p style="font-size: 24px; color: white;">
+                            Loading folders...
+                        </p>
                     </div>
                 `;
             } else {
@@ -1378,8 +1528,14 @@
                     programBtn.onclick = () => {
                         currentCategory = 'custom:' + categoryName;
                         uploadedCards = customCategories[categoryName];
-                        selectRandomCards();
-                        showSetupScreen();
+                        
+                        // If 4+ images, show selection screen; otherwise go straight to setup
+                        if (customCategories[categoryName].length > 3) {
+                            showPhotoSelectionScreen(categoryName);
+                        } else {
+                            selectRandomCards();
+                            showSetupScreen();
+                        }
                     };
                     
                     // Hover effect
