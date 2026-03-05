@@ -545,13 +545,13 @@
             color: #667eea;
         }
         
-        .category-select {
+        .program-select {
             display: grid;
             gap: 15px;
             margin-bottom: 20px;
         }
         
-        .category-btn {
+        .program-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
@@ -564,7 +564,7 @@
             transition: all 0.3s;
         }
         
-        .category-btn:hover {
+        .program-btn:hover {
             transform: scale(1.05);
         }
         
@@ -724,34 +724,26 @@
                     <p style="font-size: 12px; color: #999; margin-top: 5px;">How many correct answers to complete the game</p>
                 </div>
                 
-                <button class="category-btn" onclick="saveSettings()" style="width: 100%;">Save Settings ✅</button>
-            </div>
-            
-            <div class="category-select" style="border-top: 2px solid #eee; padding-top: 30px;">
-                <h3 style="margin-bottom: 15px; color: #667eea;">Preset Categories</h3>
-                <button class="category-btn" onclick="selectCategory('animals')">🐾 Animals</button>
-                <button class="category-btn" onclick="selectCategory('shapes')">⭐ Shapes</button>
-                <button class="category-btn" onclick="selectCategory('numbers')">🔢 Numbers</button>
-                <button class="category-btn" onclick="selectCategory('fruits')">🍎 Fruits</button>
+                <button class="program-btn" onclick="saveSettings()" style="width: 100%;">Save Settings ✅</button>
             </div>
             
             <div style="border-top: 2px solid #eee; padding-top: 30px; margin-top: 30px;">
-                <h3 style="margin-bottom: 15px; color: #667eea;">📁 My Folders & Categories</h3>
-                <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Organize your categories into folders by kid or theme</p>
+                <h3 style="margin-bottom: 15px; color: #667eea;">📁 My Folders & Programs</h3>
+                <p style="font-size: 14px; color: #666; margin-bottom: 15px;">Organize your programs into folders by kid or theme</p>
                 
                 <!-- Restore button if old data exists -->
-                <button id="restoreOldDataBtn" class="category-btn" onclick="manuallyRestoreOldData()" 
+                <button id="restoreOldDataBtn" class="program-btn" onclick="manuallyRestoreOldData()" 
                         style="width: 100%; background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%); color: white; margin-bottom: 15px; display: none;">
-                    🔄 Restore My Old Categories
+                    🔄 Restore My Old Programs
                 </button>
                 
-                <div id="customCategoriesList"></div>
+                <div id="customProgramsList"></div>
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
-                    <button class="category-btn" onclick="createNewFolder()" style="flex: 1; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <button class="program-btn" onclick="createNewFolder()" style="flex: 1; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                         📁 New Folder
                     </button>
-                    <button class="category-btn" onclick="createNewCategory()" style="flex: 1; background: linear-gradient(135deg, #6bcf7f 0%, #4caf50 100%);">
-                        ➕ New Category
+                    <button class="program-btn" onclick="createNewProgram()" style="flex: 1; background: linear-gradient(135deg, #6bcf7f 0%, #4caf50 100%);">
+                        ➕ New Program
                     </button>
                 </div>
             </div>
@@ -765,41 +757,41 @@
         </div>
     </div>
     
-    <div class="modal" id="categoryModal">
+    <div class="modal" id="programModal">
         <div class="modal-content" style="max-height: 85vh; overflow-y: auto;">
-            <button class="close-modal" onclick="closeCategoryModal()">×</button>
-            <h2 id="categoryModalTitle">Manage Category</h2>
+            <button class="close-modal" onclick="closeProgramModal()">×</button>
+            <h2 id="programModalTitle">Manage Program</h2>
             
             <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Category Name:</label>
-                <input type="text" id="categoryNameInput" placeholder="e.g., My Photos, Family, etc."
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Program Name:</label>
+                <input type="text" id="programNameInput" placeholder="e.g., My Photos, Family, etc."
                        style="width: 100%; padding: 12px; border: 2px solid #667eea; border-radius: 10px; font-size: 16px; font-family: 'Fredoka', sans-serif;">
             </div>
             
             <div style="margin-bottom: 20px;">
                 <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">📁 Put in Folder:</label>
-                <select id="categoryFolderSelect"
+                <select id="programFolderSelect"
                         style="width: 100%; padding: 12px; border: 2px solid #667eea; border-radius: 10px; font-size: 16px; font-family: 'Fredoka', sans-serif;">
                     <option value="">No folder (ungrouped)</option>
                 </select>
             </div>
             
             <div style="margin-bottom: 20px;">
-                <h3 style="margin-bottom: 10px;">Images in this category:</h3>
+                <h3 style="margin-bottom: 10px;">Images in this program:</h3>
                 <p style="font-size: 13px; color: #666; margin-bottom: 10px;">💡 Click on any image label to edit it</p>
-                <div class="uploaded-images" id="categoryImagesList"></div>
+                <div class="uploaded-images" id="programImagesList"></div>
             </div>
             
-            <div class="upload-area" onclick="document.getElementById('categoryFileInput').click()" style="margin-bottom: 20px;">
+            <div class="upload-area" onclick="document.getElementById('programFileInput').click()" style="margin-bottom: 20px;">
                 <p style="font-size: 48px; margin-bottom: 10px;">📸</p>
                 <p style="font-size: 18px; color: #667eea; font-weight: 600;">Add More Images</p>
                 <p style="font-size: 14px; color: #999; margin-top: 5px;">Select multiple images at once</p>
             </div>
-            <input type="file" id="categoryFileInput" accept="image/*" multiple onchange="handleCategoryImageUpload(event)">
+            <input type="file" id="programFileInput" accept="image/*" multiple onchange="handleProgramImageUpload(event)">
             
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn btn-primary" onclick="saveCategoryChanges()" style="flex: 1;">Save Category</button>
-                <button class="btn" onclick="deleteCategory()" style="flex: 1; background: #ff6b6b; color: white;">Delete Category</button>
+                <button class="btn btn-primary" onclick="saveProgramChanges()" style="flex: 1;">Save Program</button>
+                <button class="btn" onclick="deleteProgram()" style="flex: 1; background: #ff6b6b; color: white;">Delete Program</button>
             </div>
         </div>
     </div>
@@ -913,12 +905,12 @@
         }
         
         // Game state
-        let currentCategory = 'animals';
+        let currentProgram = 'animals';
         let currentCards = [];
         let correctAnswer = null;
         let uploadedCards = [];
-        let customCategories = {}; // Store custom categories: { categoryName: [cards] }
-        let folders = {}; // Store folders: { folderName: [categoryNames] }
+        let customPrograms = {}; // Store custom programs: { programName: [cards] }
+        let folders = {}; // Store folders: { folderName: [programNames] }
         let currentFolder = null; // Currently selected folder
         let gameMode = 'setup'; // 'setup', 'playing', or 'results'
         let currentRound = 0;
@@ -973,8 +965,8 @@
                 isFirebaseReady = true;
                 console.log('✅ Firebase initialized successfully!');
                 console.log('📊 Database URL:', firebaseConfig.databaseURL);
-                // Load categories after Firebase is ready
-                loadCategoriesFromStorage();
+                // Load programs after Firebase is ready
+                loadProgramsFromStorage();
             } catch (error) {
                 console.error('❌ Firebase initialization error:', error);
                 alert('Firebase error: ' + error.message);
@@ -984,8 +976,8 @@
         // Start Firebase initialization
         setTimeout(initFirebase, 100);
         
-        // Load categories from Firebase on startup
-        function loadCategoriesFromStorage() {
+        // Load programs from Firebase on startup
+        function loadProgramsFromStorage() {
             if (!isFirebaseReady || !database) {
                 console.error('❌ Firebase not ready');
                 return;
@@ -993,29 +985,29 @@
             
             console.log('📥 Loading data from Firebase...');
             const newDataRef = database.ref('flashcard-data');
-            const oldDataRef = database.ref('flashcard-categories');
+            const oldDataRef = database.ref('flashcard-programs');
             
             // First check if new data exists
             newDataRef.once('value').then((snapshot) => {
                 const newData = snapshot.val();
                 
-                if (newData && newData.categories) {
+                if (newData && newData.programs) {
                     // New data exists, use it
                     console.log('✅ Loading from new data structure');
-                    customCategories = newData.categories || {};
+                    customPrograms = newData.programs || {};
                     folders = newData.folders || {};
-                    console.log('✅ Loaded categories:', Object.keys(customCategories));
+                    console.log('✅ Loaded programs:', Object.keys(customPrograms));
                     console.log('📁 Loaded folders:', Object.keys(folders));
-                    updateFoldersAndCategoriesList();
+                    updateFoldersAndProgramsList();
                     
                     // Set up real-time listener
                     newDataRef.on('value', (snapshot) => {
                         const data = snapshot.val();
                         if (data) {
-                            customCategories = data.categories || {};
+                            customPrograms = data.programs || {};
                             folders = data.folders || {};
                             console.log('🔄 Data updated');
-                            updateFoldersAndCategoriesList();
+                            updateFoldersAndProgramsList();
                         }
                     });
                 } else {
@@ -1026,27 +1018,27 @@
                         
                         if (oldData) {
                             console.log('🔄 Migrating old data to new structure...');
-                            customCategories = oldData;
+                            customPrograms = oldData;
                             folders = {}; // No folders in old structure
                             
                             // Save to new structure
                             const migratedData = {
-                                categories: customCategories,
+                                programs: customPrograms,
                                 folders: folders
                             };
                             
                             newDataRef.set(migratedData).then(() => {
                                 console.log('✅ Migration complete!');
-                                updateFoldersAndCategoriesList();
+                                updateFoldersAndProgramsList();
                                 
                                 // Set up real-time listener on new path
                                 newDataRef.on('value', (snapshot) => {
                                     const data = snapshot.val();
                                     if (data) {
-                                        customCategories = data.categories || {};
+                                        customPrograms = data.programs || {};
                                         folders = data.folders || {};
                                         console.log('🔄 Data updated');
-                                        updateFoldersAndCategoriesList();
+                                        updateFoldersAndProgramsList();
                                     }
                                 });
                             }).catch((error) => {
@@ -1054,9 +1046,9 @@
                             });
                         } else {
                             console.log('ℹ️ No data found (starting fresh)');
-                            customCategories = {};
+                            customPrograms = {};
                             folders = {};
-                            updateFoldersAndCategoriesList();
+                            updateFoldersAndProgramsList();
                         }
                     });
                 }
@@ -1074,8 +1066,8 @@
             });
         }
         
-        // Save categories to Firebase (shared across all users)
-        async function saveCategoriesToStorage() {
+        // Save programs to Firebase (shared across all users)
+        async function saveProgramsToStorage() {
             if (!isFirebaseReady || !database) {
                 console.error('❌ Firebase not initialized');
                 alert('Firebase is not ready. Please wait and try again.');
@@ -1084,11 +1076,11 @@
             
             try {
                 console.log('💾 Saving to Firebase...');
-                console.log('📦 Saving', Object.keys(customCategories).length, 'categories');
-                console.log('📋 Category names:', Object.keys(customCategories));
+                console.log('📦 Saving', Object.keys(customPrograms).length, 'programs');
+                console.log('📋 Program names:', Object.keys(customPrograms));
                 
                 // Check data size
-                const dataStr = JSON.stringify(customCategories);
+                const dataStr = JSON.stringify(customPrograms);
                 const dataSizeKB = (dataStr.length / 1024).toFixed(2);
                 console.log('📏 Data size:', dataSizeKB, 'KB');
                 
@@ -1098,9 +1090,9 @@
                 
                 console.log('🔄 Calling Firebase set() with callback...');
                 
-                // Save both categories and folders
+                // Save both programs and folders
                 const dataToSave = {
-                    categories: customCategories,
+                    programs: customPrograms,
                     folders: folders
                 };
                 
@@ -1206,11 +1198,11 @@
         
         function selectRandomCards() {
             console.log('selectRandomCards called');
-            console.log('currentCategory:', currentCategory);
+            console.log('currentProgram:', currentProgram);
             console.log('uploadedCards.length:', uploadedCards.length);
             console.log('settings.numCards:', settings.numCards);
             
-            const availableCards = uploadedCards.length >= settings.numCards ? uploadedCards : cardSets[currentCategory];
+            const availableCards = uploadedCards.length >= settings.numCards ? uploadedCards : cardSets[currentProgram];
             console.log('availableCards:', availableCards);
             
             const shuffled = shuffle(availableCards);
@@ -1588,8 +1580,8 @@
             document.getElementById('layoutSelect').value = settings.cardLayout;
             document.getElementById('maxRoundsInput').value = settings.maxRounds === -1 ? '' : settings.maxRounds;
             
-            // Update custom categories list
-            updateCustomCategoriesList();
+            // Update custom programs list
+            updateCustomProgramsList();
         }
         
         function closeSettings() {
@@ -1606,33 +1598,33 @@
             resetGame();
         }
         
-        function selectCategory(category) {
-            currentCategory = category;
+        function selectProgram(program) {
+            currentProgram = program;
             uploadedCards = [];
             closeSettings();
             resetGame();
         }
         
-        let currentEditingCategory = null;
+        let currentEditingProgram = null;
         
-        function createNewCategory() {
-            console.log('createNewCategory called');
-            currentEditingCategory = null;
-            document.getElementById('categoryNameInput').value = '';
-            document.getElementById('categoryImagesList').innerHTML = '';
-            document.getElementById('categoryModalTitle').textContent = 'Create New Category';
+        function createNewProgram() {
+            console.log('createNewProgram called');
+            currentEditingProgram = null;
+            document.getElementById('programNameInput').value = '';
+            document.getElementById('programImagesList').innerHTML = '';
+            document.getElementById('programModalTitle').textContent = 'Create New Program';
             
             // Populate folder dropdown
             populateFolderDropdown();
             
             document.getElementById('settingsModal').classList.remove('show');
             setTimeout(() => {
-                document.getElementById('categoryModal').classList.add('show');
+                document.getElementById('programModal').classList.add('show');
             }, 100);
         }
         
         function populateFolderDropdown() {
-            const select = document.getElementById('categoryFolderSelect');
+            const select = document.getElementById('programFolderSelect');
             select.innerHTML = '<option value="">No folder (ungrouped)</option>';
             
             Object.keys(folders).forEach(folderName => {
@@ -1643,17 +1635,17 @@
             });
         }
         
-        function editCategory(categoryName) {
-            console.log('editCategory called:', categoryName);
-            currentEditingCategory = categoryName;
-            document.getElementById('categoryNameInput').value = categoryName;
-            document.getElementById('categoryModalTitle').textContent = 'Edit Category: ' + categoryName;
+        function editProgram(programName) {
+            console.log('editProgram called:', programName);
+            currentEditingProgram = programName;
+            document.getElementById('programNameInput').value = programName;
+            document.getElementById('programModalTitle').textContent = 'Edit Program: ' + programName;
             
             // Display current images
-            const imagesList = document.getElementById('categoryImagesList');
+            const imagesList = document.getElementById('programImagesList');
             imagesList.innerHTML = '';
             
-            customCategories[categoryName].forEach((card, index) => {
+            customPrograms[programName].forEach((card, index) => {
                 const imgDiv = document.createElement('div');
                 imgDiv.className = 'uploaded-image';
                 imgDiv.dataset.imageData = card.image;
@@ -1672,7 +1664,7 @@
                 removeBtn.textContent = '×';
                 removeBtn.onclick = function(e) {
                     e.stopPropagation();
-                    removeCategoryImage(categoryName, index);
+                    removeProgramImage(programName, index);
                 };
                 
                 const labelDiv = document.createElement('div');
@@ -1746,17 +1738,17 @@
             
             document.getElementById('settingsModal').classList.remove('show');
             setTimeout(() => {
-                document.getElementById('categoryModal').classList.add('show');
+                document.getElementById('programModal').classList.add('show');
             }, 100);
         }
         
-        function closeCategoryModal() {
-            console.log('closeCategoryModal called');
-            document.getElementById('categoryModal').classList.remove('show');
+        function closeProgramModal() {
+            console.log('closeProgramModal called');
+            document.getElementById('programModal').classList.remove('show');
             setTimeout(() => {
                 document.getElementById('settingsModal').classList.add('show');
             }, 100);
-            currentEditingCategory = null;
+            currentEditingProgram = null;
         }
         
         // Compress image to reduce file size for Firebase
@@ -1855,10 +1847,10 @@
             });
         }
         
-        function handleCategoryImageUpload(event) {
-            console.log('handleCategoryImageUpload called', event.target.files.length, 'files');
+        function handleProgramImageUpload(event) {
+            console.log('handleProgramImageUpload called', event.target.files.length, 'files');
             const files = event.target.files;
-            const imagesList = document.getElementById('categoryImagesList');
+            const imagesList = document.getElementById('programImagesList');
             
             if (!files || files.length === 0) {
                 console.log('No files selected');
@@ -1934,31 +1926,31 @@
             event.target.value = '';
         }
         
-        function removeCategoryImage(categoryName, index) {
+        function removeProgramImage(programName, index) {
             if (confirm('Remove this image?')) {
-                customCategories[categoryName].splice(index, 1);
-                if (customCategories[categoryName].length === 0) {
-                    delete customCategories[categoryName];
-                    closeCategoryModal();
-                    updateCustomCategoriesList();
+                customPrograms[programName].splice(index, 1);
+                if (customPrograms[programName].length === 0) {
+                    delete customPrograms[programName];
+                    closeProgramModal();
+                    updateCustomProgramsList();
                 } else {
-                    editCategory(categoryName);
+                    editProgram(programName);
                 }
             }
         }
         
-        async function saveCategoryChanges() {
-            console.log('saveCategoryChanges called');
-            const categoryName = document.getElementById('categoryNameInput').value.trim();
-            console.log('Category name:', categoryName);
+        async function saveProgramChanges() {
+            console.log('saveProgramChanges called');
+            const programName = document.getElementById('programNameInput').value.trim();
+            console.log('Program name:', programName);
             
-            if (!categoryName) {
-                alert('Please enter a category name!');
+            if (!programName) {
+                alert('Please enter a program name!');
                 return;
             }
             
             // Collect all images from the UI
-            const imagesList = document.getElementById('categoryImagesList');
+            const imagesList = document.getElementById('programImagesList');
             const images = [];
             
             console.log('Images in list:', imagesList.children.length);
@@ -1975,73 +1967,73 @@
             console.log('Total images collected:', images.length);
             
             if (images.length === 0) {
-                alert('Please add at least 1 image to this category!');
+                alert('Please add at least 1 image to this program!');
                 return;
             }
             
-            // If renaming, delete old category
-            if (currentEditingCategory && currentEditingCategory !== categoryName) {
-                console.log('Renaming from', currentEditingCategory, 'to', categoryName);
-                delete customCategories[currentEditingCategory];
+            // If renaming, delete old program
+            if (currentEditingProgram && currentEditingProgram !== programName) {
+                console.log('Renaming from', currentEditingProgram, 'to', programName);
+                delete customPrograms[currentEditingProgram];
             }
             
-            customCategories[categoryName] = images;
-            console.log('Category saved:', categoryName, 'with', images.length, 'images');
+            customPrograms[programName] = images;
+            console.log('Program saved:', programName, 'with', images.length, 'images');
             
             // Add to selected folder
-            const selectedFolder = document.getElementById('categoryFolderSelect').value;
+            const selectedFolder = document.getElementById('programFolderSelect').value;
             if (selectedFolder) {
                 if (!folders[selectedFolder]) {
                     folders[selectedFolder] = [];
                 }
-                if (!folders[selectedFolder].includes(categoryName)) {
-                    folders[selectedFolder].push(categoryName);
+                if (!folders[selectedFolder].includes(programName)) {
+                    folders[selectedFolder].push(programName);
                 }
             }
             
-            // Auto-select this category
-            currentCategory = 'custom:' + categoryName;
+            // Auto-select this program
+            currentProgram = 'custom:' + programName;
             uploadedCards = images;
             
             // Save to persistent storage and wait for result
             console.log('⏳ Waiting for Firebase save to complete...');
-            const success = await saveCategoriesToStorage();
+            const success = await saveProgramsToStorage();
             
             if (success) {
-                console.log('✅ saveCategoryChanges: Save confirmed successful');
-                closeCategoryModal();
-                updateCustomCategoriesList();
+                console.log('✅ saveProgramChanges: Save confirmed successful');
+                closeProgramModal();
+                updateCustomProgramsList();
                 closeSettings();
                 resetGame();
             } else {
-                console.error('❌ saveCategoryChanges: Save failed, not closing modal');
+                console.error('❌ saveProgramChanges: Save failed, not closing modal');
                 // Don't close modal if save failed
             }
         }
         
-        function deleteCategory() {
-            if (!currentEditingCategory) {
-                alert('Cannot delete a category that hasn\'t been saved yet. Just close this window instead.');
+        function deleteProgram() {
+            if (!currentEditingProgram) {
+                alert('Cannot delete a program that hasn\'t been saved yet. Just close this window instead.');
                 return;
             }
             
-            if (confirm(`Delete the "${currentEditingCategory}" category? This cannot be undone.`)) {
-                delete customCategories[currentEditingCategory];
-                saveCategoriesToStorage();
-                closeCategoryModal();
-                updateCustomCategoriesList();
+            if (confirm(`Delete the "${currentEditingProgram}" program? This cannot be undone.`)) {
+                delete customPrograms[currentEditingProgram];
+                saveProgramsToStorage();
+                closeProgramModal();
+                updateCustomProgramsList();
             }
         }
         
-        function updateFoldersAndCategoriesList() {
-            const container = document.getElementById('customCategoriesList');
+        function updateFoldersAndProgramsList() {
+            const container = document.getElementById('customProgramsList');
             container.innerHTML = '';
             
             // Check if we should show restore button
-            const hasNoData = Object.keys(customCategories).length === 0 && Object.keys(folders).length === 0;
+            const hasNoData = Object.keys(customPrograms).length === 0 && Object.keys(folders).length === 0;
             if (hasNoData && database) {
                 // Check for old data
-                database.ref('flashcard-categories').once('value').then((snapshot) => {
+                database.ref('flashcard-programs').once('value').then((snapshot) => {
                     if (snapshot.val() && Object.keys(snapshot.val()).length > 0) {
                         document.getElementById('restoreOldDataBtn').style.display = 'block';
                     }
@@ -2050,74 +2042,74 @@
                 document.getElementById('restoreOldDataBtn').style.display = 'none';
             }
             
-            // If viewing a specific folder, show categories in that folder
+            // If viewing a specific folder, show programs in that folder
             if (currentFolder) {
                 // Back button
                 const backBtn = document.createElement('button');
-                backBtn.className = 'category-btn';
+                backBtn.className = 'program-btn';
                 backBtn.style.background = 'linear-gradient(135deg, #999 0%, #666 100())';
                 backBtn.style.color = 'white';
                 backBtn.style.marginBottom = '15px';
                 backBtn.textContent = `⬅️ Back to Folders`;
                 backBtn.onclick = () => {
                     currentFolder = null;
-                    updateFoldersAndCategoriesList();
+                    updateFoldersAndProgramsList();
                 };
                 container.appendChild(backBtn);
                 
-                // Show categories in this folder
-                const categoriesInFolder = folders[currentFolder] || [];
+                // Show programs in this folder
+                const programsInFolder = folders[currentFolder] || [];
                 
-                if (categoriesInFolder.length === 0) {
-                    container.innerHTML += '<p style="text-align: center; color: #999; padding: 20px;">No categories in this folder yet</p>';
+                if (programsInFolder.length === 0) {
+                    container.innerHTML += '<p style="text-align: center; color: #999; padding: 20px;">No programs in this folder yet</p>';
                 } else {
-                    categoriesInFolder.forEach(categoryName => {
-                        if (customCategories[categoryName]) {
-                            const categoryDiv = document.createElement('div');
-                            categoryDiv.style.display = 'flex';
-                            categoryDiv.style.gap = '10px';
-                            categoryDiv.style.marginBottom = '10px';
+                    programsInFolder.forEach(programName => {
+                        if (customPrograms[programName]) {
+                            const programDiv = document.createElement('div');
+                            programDiv.style.display = 'flex';
+                            programDiv.style.gap = '10px';
+                            programDiv.style.marginBottom = '10px';
                             
-                            // Use category button
+                            // Use program button
                             const useBtn = document.createElement('button');
-                            useBtn.className = 'category-btn';
+                            useBtn.className = 'program-btn';
                             useBtn.style.flex = '1';
-                            useBtn.textContent = `🎴 ${categoryName} (${customCategories[categoryName].length} images)`;
-                            useBtn.onclick = () => useCustomCategory(categoryName);
+                            useBtn.textContent = `🎴 ${programName} (${customPrograms[programName].length} images)`;
+                            useBtn.onclick = () => useCustomProgram(programName);
                             
                             // Remove from folder button
                             const removeBtn = document.createElement('button');
-                            removeBtn.className = 'category-btn';
+                            removeBtn.className = 'program-btn';
                             removeBtn.style.flex = '0 0 60px';
                             removeBtn.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100())';
                             removeBtn.textContent = '➖';
                             removeBtn.title = 'Remove from folder';
-                            removeBtn.onclick = () => removeCategoryFromFolder(categoryName, currentFolder);
+                            removeBtn.onclick = () => removeProgramFromFolder(programName, currentFolder);
                             
                             // Edit button
                             const editBtn = document.createElement('button');
-                            editBtn.className = 'category-btn';
+                            editBtn.className = 'program-btn';
                             editBtn.style.flex = '0 0 60px';
                             editBtn.style.background = 'linear-gradient(135deg, #ffd93d 0%, #ff8c42 100%)';
                             editBtn.textContent = '✏️';
-                            editBtn.onclick = () => editCategory(categoryName);
+                            editBtn.onclick = () => editProgram(programName);
                             
-                            categoryDiv.appendChild(useBtn);
-                            categoryDiv.appendChild(removeBtn);
-                            categoryDiv.appendChild(editBtn);
-                            container.appendChild(categoryDiv);
+                            programDiv.appendChild(useBtn);
+                            programDiv.appendChild(removeBtn);
+                            programDiv.appendChild(editBtn);
+                            container.appendChild(programDiv);
                         }
                     });
                 }
             } else {
-                // Show folder list OR ungrouped categories
+                // Show folder list OR ungrouped programs
                 const folderKeys = Object.keys(folders);
-                const categoryKeys = Object.keys(customCategories);
+                const programKeys = Object.keys(customPrograms);
                 
-                // Get categories that aren't in any folder
-                const categoriesInFolders = new Set();
-                Object.values(folders).forEach(cats => cats.forEach(cat => categoriesInFolders.add(cat)));
-                const ungroupedCategories = categoryKeys.filter(cat => !categoriesInFolders.has(cat));
+                // Get programs that aren't in any folder
+                const programsInFolders = new Set();
+                Object.values(folders).forEach(cats => cats.forEach(cat => programsInFolders.add(cat)));
+                const ungroupedPrograms = programKeys.filter(cat => !programsInFolders.has(cat));
                 
                 // Show folders first
                 if (folderKeys.length > 0) {
@@ -2129,18 +2121,18 @@
                         
                         // Open folder button
                         const openBtn = document.createElement('button');
-                        openBtn.className = 'category-btn';
+                        openBtn.className = 'program-btn';
                         openBtn.style.flex = '1';
-                        const categoryCount = (folders[folderName] || []).length;
-                        openBtn.textContent = `📁 ${folderName} (${categoryCount} categories)`;
+                        const programCount = (folders[folderName] || []).length;
+                        openBtn.textContent = `📁 ${folderName} (${programCount} programs)`;
                         openBtn.onclick = () => {
                             currentFolder = folderName;
-                            updateFoldersAndCategoriesList();
+                            updateFoldersAndProgramsList();
                         };
                         
                         // Delete folder button
                         const deleteBtn = document.createElement('button');
-                        deleteBtn.className = 'category-btn';
+                        deleteBtn.className = 'program-btn';
                         deleteBtn.style.flex = '0 0 60px';
                         deleteBtn.style.background = 'linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100())';
                         deleteBtn.textContent = '🗑️';
@@ -2152,57 +2144,57 @@
                     });
                 }
                 
-                // Show ungrouped categories
-                if (ungroupedCategories.length > 0) {
+                // Show ungrouped programs
+                if (ungroupedPrograms.length > 0) {
                     if (folderKeys.length > 0) {
                         const divider = document.createElement('div');
                         divider.style.margin = '20px 0 10px 0';
                         divider.style.padding = '10px 0';
                         divider.style.borderTop = '2px solid #eee';
-                        divider.innerHTML = '<p style="color: #999; font-size: 14px; text-align: center;">Ungrouped Categories</p>';
+                        divider.innerHTML = '<p style="color: #999; font-size: 14px; text-align: center;">Ungrouped Programs</p>';
                         container.appendChild(divider);
                     }
                     
-                    ungroupedCategories.forEach(categoryName => {
-                        const categoryDiv = document.createElement('div');
-                        categoryDiv.style.display = 'flex';
-                        categoryDiv.style.gap = '10px';
-                        categoryDiv.style.marginBottom = '10px';
+                    ungroupedPrograms.forEach(programName => {
+                        const programDiv = document.createElement('div');
+                        programDiv.style.display = 'flex';
+                        programDiv.style.gap = '10px';
+                        programDiv.style.marginBottom = '10px';
                         
-                        // Use category button
+                        // Use program button
                         const useBtn = document.createElement('button');
-                        useBtn.className = 'category-btn';
+                        useBtn.className = 'program-btn';
                         useBtn.style.flex = '1';
-                        useBtn.textContent = `🎴 ${categoryName} (${customCategories[categoryName].length} images)`;
-                        useBtn.onclick = () => useCustomCategory(categoryName);
+                        useBtn.textContent = `🎴 ${programName} (${customPrograms[programName].length} images)`;
+                        useBtn.onclick = () => useCustomProgram(programName);
                         
                         // Move to folder button
                         const folderBtn = document.createElement('button');
-                        folderBtn.className = 'category-btn';
+                        folderBtn.className = 'program-btn';
                         folderBtn.style.flex = '0 0 60px';
                         folderBtn.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
                         folderBtn.textContent = '📁';
                         folderBtn.title = 'Move to folder';
-                        folderBtn.onclick = () => assignCategoryToFolder(categoryName);
+                        folderBtn.onclick = () => assignProgramToFolder(programName);
                         
                         // Edit button
                         const editBtn = document.createElement('button');
-                        editBtn.className = 'category-btn';
+                        editBtn.className = 'program-btn';
                         editBtn.style.flex = '0 0 60px';
                         editBtn.style.background = 'linear-gradient(135deg, #ffd93d 0%, #ff8c42 100%)';
                         editBtn.textContent = '✏️';
-                        editBtn.onclick = () => editCategory(categoryName);
+                        editBtn.onclick = () => editProgram(programName);
                         
-                        categoryDiv.appendChild(useBtn);
-                        categoryDiv.appendChild(folderBtn);
-                        categoryDiv.appendChild(editBtn);
-                        container.appendChild(categoryDiv);
+                        programDiv.appendChild(useBtn);
+                        programDiv.appendChild(folderBtn);
+                        programDiv.appendChild(editBtn);
+                        container.appendChild(programDiv);
                     });
                 }
                 
                 // Show message if completely empty
-                if (folderKeys.length === 0 && ungroupedCategories.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No folders or categories yet. Create one to get started!</p>';
+                if (folderKeys.length === 0 && ungroupedPrograms.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No folders or programs yet. Create one to get started!</p>';
                 }
             }
         }
@@ -2216,26 +2208,26 @@
                     return;
                 }
                 folders[trimmedName] = [];
-                saveCategoriesToStorage();
-                updateFoldersAndCategoriesList();
+                saveProgramsToStorage();
+                updateFoldersAndProgramsList();
             }
         }
         
         function deleteFolder(folderName) {
-            if (confirm(`Delete folder "${folderName}"? Categories inside will not be deleted, just ungrouped.`)) {
+            if (confirm(`Delete folder "${folderName}"? Programs inside will not be deleted, just ungrouped.`)) {
                 delete folders[folderName];
-                saveCategoriesToStorage();
-                updateFoldersAndCategoriesList();
+                saveProgramsToStorage();
+                updateFoldersAndProgramsList();
             }
         }
         
         async function manuallyRestoreOldData() {
-            if (!confirm('This will restore your old categories. Continue?')) {
+            if (!confirm('This will restore your old programs. Continue?')) {
                 return;
             }
             
             console.log('🔄 Manually restoring old data...');
-            const oldDataRef = database.ref('flashcard-categories');
+            const oldDataRef = database.ref('flashcard-programs');
             
             try {
                 const snapshot = await oldDataRef.once('value');
@@ -2243,14 +2235,14 @@
                 
                 if (oldData) {
                     console.log('✅ Found old data:', Object.keys(oldData));
-                    customCategories = oldData;
+                    customPrograms = oldData;
                     folders = {};
                     
                     // Save to new location
-                    await saveCategoriesToStorage();
+                    await saveProgramsToStorage();
                     
-                    alert('Categories restored! They appear in the "ungrouped" section. You can now create folders to organize them.');
-                    updateFoldersAndCategoriesList();
+                    alert('Programs restored! They appear in the "ungrouped" section. You can now create folders to organize them.');
+                    updateFoldersAndProgramsList();
                     
                     // Hide restore button
                     document.getElementById('restoreOldDataBtn').style.display = 'none';
@@ -2263,21 +2255,21 @@
             }
         }
         
-        let pendingCategoryToMove = null; // Track which category is being moved
+        let pendingProgramToMove = null; // Track which program is being moved
         
-        async function assignCategoryToFolder(categoryName) {
+        async function assignProgramToFolder(programName) {
             const folderKeys = Object.keys(folders);
             
             if (folderKeys.length === 0) {
-                alert('No folders exist yet! Create a folder first, then assign categories to it.');
+                alert('No folders exist yet! Create a folder first, then assign programs to it.');
                 return;
             }
             
-            // Set pending category
-            pendingCategoryToMove = categoryName;
+            // Set pending program
+            pendingProgramToMove = programName;
             
             // Update message
-            document.getElementById('folderSelectMessage').textContent = `Move "${categoryName}" to which folder?`;
+            document.getElementById('folderSelectMessage').textContent = `Move "${programName}" to which folder?`;
             
             // Populate dropdown
             const dropdown = document.getElementById('folderSelectDropdown');
@@ -2296,48 +2288,48 @@
         
         function closeFolderSelectModal() {
             document.getElementById('folderSelectModal').classList.remove('show');
-            pendingCategoryToMove = null;
+            pendingProgramToMove = null;
         }
         
         async function confirmFolderSelection() {
-            if (!pendingCategoryToMove) return;
+            if (!pendingProgramToMove) return;
             
             const selectedFolder = document.getElementById('folderSelectDropdown').value;
-            const categoryName = pendingCategoryToMove;
+            const programName = pendingProgramToMove;
             
-            // Add category to folder
+            // Add program to folder
             if (!folders[selectedFolder]) {
                 folders[selectedFolder] = [];
             }
             
-            if (!folders[selectedFolder].includes(categoryName)) {
-                folders[selectedFolder].push(categoryName);
-                await saveCategoriesToStorage();
+            if (!folders[selectedFolder].includes(programName)) {
+                folders[selectedFolder].push(programName);
+                await saveProgramsToStorage();
                 closeFolderSelectModal();
-                updateFoldersAndCategoriesList();
+                updateFoldersAndProgramsList();
             } else {
-                alert(`"${categoryName}" is already in "${selectedFolder}"`);
+                alert(`"${programName}" is already in "${selectedFolder}"`);
             }
         }
         
-        async function removeCategoryFromFolder(categoryName, folderName) {
-            if (confirm(`Remove "${categoryName}" from folder "${folderName}"?\n\nThe category will move to "Ungrouped Categories".`)) {
+        async function removeProgramFromFolder(programName, folderName) {
+            if (confirm(`Remove "${programName}" from folder "${folderName}"?\n\nThe program will move to "Ungrouped Programs".`)) {
                 if (folders[folderName]) {
-                    folders[folderName] = folders[folderName].filter(cat => cat !== categoryName);
-                    await saveCategoriesToStorage();
-                    updateFoldersAndCategoriesList();
+                    folders[folderName] = folders[folderName].filter(cat => cat !== programName);
+                    await saveProgramsToStorage();
+                    updateFoldersAndProgramsList();
                 }
             }
         }
         
         // Keep old function for backward compatibility but redirect to new one
-        function updateCustomCategoriesList() {
-            updateFoldersAndCategoriesList();
+        function updateCustomProgramsList() {
+            updateFoldersAndProgramsList();
         }
         
-        function useCustomCategory(categoryName) {
-            currentCategory = 'custom:' + categoryName;
-            uploadedCards = customCategories[categoryName];
+        function useCustomProgram(programName) {
+            currentProgram = 'custom:' + programName;
+            uploadedCards = customPrograms[programName];
             closeSettings();
             resetGame();
         }
@@ -2364,7 +2356,7 @@
         createStars();
         selectRandomCards();
         showSetupScreen();
-        // loadCategoriesFromStorage is called automatically when Firebase is ready
+        // loadProgramsFromStorage is called automatically when Firebase is ready
     </script>
     
     <!-- Folder Selection Modal -->
