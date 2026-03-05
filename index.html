@@ -120,7 +120,7 @@
         
         .cards-container {
             display: flex;
-            flex-direction: row; /* DEFAULT TO HORIZONTAL */
+            flex-direction: row !important; /* FORCE HORIZONTAL */
             justify-content: center;
             align-items: center;
             gap: 20px;
@@ -132,11 +132,11 @@
         }
         
         .cards-container.vertical {
-            flex-direction: column;
+            flex-direction: column !important;
         }
         
         .cards-container.horizontal {
-            flex-direction: row;
+            flex-direction: row !important;
         }
         
         .card {
@@ -1609,9 +1609,14 @@
                 container.innerHTML = '';
                 controls.style.display = 'flex'; // Show controls with settings button
                 
-                // Apply horizontal layout
+                // Apply horizontal layout - FORCE IT
                 container.className = 'cards-container horizontal';
+                container.style.flexDirection = 'row';
+                container.style.display = 'flex';
+                container.style.flexWrap = 'wrap';
+                container.style.justifyContent = 'center';
                 console.log('🎨 Applied className:', container.className);
+                console.log('🎨 Inline flexDirection:', container.style.flexDirection);
                 console.log('🎨 Container flex-direction:', window.getComputedStyle(container).flexDirection);
                 
                 currentCards.forEach((card, index) => {
@@ -1683,8 +1688,12 @@
             // Force reflow to ensure all styles are cleared
             void container.offsetHeight;
             
-            // Apply horizontal layout
+            // Apply horizontal layout - FORCE IT
             container.className = 'cards-container horizontal';
+            container.style.flexDirection = 'row';
+            container.style.display = 'flex';
+            container.style.flexWrap = 'wrap';
+            container.style.justifyContent = 'center';
             
             // Show round indicator if limited rounds
             if (settings.maxTrials > 0) {
