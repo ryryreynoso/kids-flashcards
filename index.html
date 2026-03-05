@@ -2263,6 +2263,8 @@
             }
         }
         
+        let pendingCategoryToMove = null; // Track which category is being moved
+        
         async function assignCategoryToFolder(categoryName) {
             const folderKeys = Object.keys(folders);
             
@@ -2271,37 +2273,50 @@
                 return;
             }
             
-            // Create selection dialog
-            let message = `Move "${categoryName}" to which folder?\n\n`;
-            folderKeys.forEach((folder, index) => {
-                message += `${index + 1}. ${folder}\n`;
+            // Set pending category
+            pendingCategoryToMove = categoryName;
+            
+            // Update message
+            document.getElementById('folderSelectMessage').textContent = `Move "${categoryName}" to which folder?`;
+            
+            // Populate dropdown
+            const dropdown = document.getElementById('folderSelectDropdown');
+            dropdown.innerHTML = '';
+            
+            folderKeys.forEach(folderName => {
+                const option = document.createElement('option');
+                option.value = folderName;
+                option.textContent = folderName;
+                dropdown.appendChild(option);
             });
-            message += '\nEnter the number of the folder:';
             
-            const choice = prompt(message);
+            // Show modal
+            document.getElementById('folderSelectModal').classList.add('show');
+        }
+        
+        function closeFolderSelectModal() {
+            document.getElementById('folderSelectModal').classList.remove('show');
+            pendingCategoryToMove = null;
+        }
+        
+        async function confirmFolderSelection() {
+            if (!pendingCategoryToMove) return;
             
-            if (choice === null) return; // Cancelled
+            const selectedFolder = document.getElementById('folderSelectDropdown').value;
+            const categoryName = pendingCategoryToMove;
             
-            const folderIndex = parseInt(choice) - 1;
+            // Add category to folder
+            if (!folders[selectedFolder]) {
+                folders[selectedFolder] = [];
+            }
             
-            if (folderIndex >= 0 && folderIndex < folderKeys.length) {
-                const selectedFolder = folderKeys[folderIndex];
-                
-                // Add category to folder
-                if (!folders[selectedFolder]) {
-                    folders[selectedFolder] = [];
-                }
-                
-                if (!folders[selectedFolder].includes(categoryName)) {
-                    folders[selectedFolder].push(categoryName);
-                    await saveCategoriesToStorage();
-                    alert(`✅ Moved "${categoryName}" to folder "${selectedFolder}"!`);
-                    updateFoldersAndCategoriesList();
-                } else {
-                    alert(`"${categoryName}" is already in "${selectedFolder}"`);
-                }
+            if (!folders[selectedFolder].includes(categoryName)) {
+                folders[selectedFolder].push(categoryName);
+                await saveCategoriesToStorage();
+                closeFolderSelectModal();
+                updateFoldersAndCategoriesList();
             } else {
-                alert('Invalid selection. Please try again.');
+                alert(`"${categoryName}" is already in "${selectedFolder}"`);
             }
         }
         
@@ -2351,5 +2366,28 @@
         showSetupScreen();
         // loadCategoriesFromStorage is called automatically when Firebase is ready
     </script>
+    
+    <!-- Folder Selection Modal -->
+    <div class="modal" id="folderSelectModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <button class="close-modal" onclick="closeFolderSelectModal()">×</button>
+            <h2>Move to Folder</h2>
+            
+            <p id="folderSelectMessage" style="margin: 20px 0; color: #666;"></p>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Select Folder:</label>
+                <select id="folderSelectDropdown"
+                        style="width: 100%; padding: 12px; border: 2px solid #667eea; border-radius: 10px; font-size: 16px; font-family: 'Fredoka', sans-serif;">
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button class="btn btn-primary" onclick="confirmFolderSelection()" style="flex: 1;">Move to Folder ✅</button>
+                <button class="btn" onclick="closeFolderSelectModal()" style="flex: 1; background: #999; color: white;">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
 </body>
 </html>
