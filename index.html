@@ -1686,6 +1686,7 @@
             
             currentCards.forEach((card, index) => {
                 console.log('Rendering card', index, ':', card);
+                console.log('Rendering card', index, ':', card);
                 if (card.image) {
                     // Custom uploaded image card - wrap with label outside
                     const wrapper = document.createElement('div');
@@ -1723,6 +1724,11 @@
             console.log('Total cards in container:', container.children.length);
             console.log('Container display:', window.getComputedStyle(container).display);
             console.log('Container visibility:', window.getComputedStyle(container).visibility);
+            
+            // Force orientation check after rendering
+            setTimeout(() => {
+                updateLayoutForOrientation();
+            }, 50);
         }
     }
     
@@ -3061,14 +3067,15 @@
         }
     }
     
-    // Listen for orientation changes
+    // Listen for orientation changes (works on most devices)
     window.addEventListener('orientationchange', () => {
-        console.log('🔄 Orientation changed!');
+        console.log('🔄 orientationchange event fired!');
         setTimeout(updateLayoutForOrientation, 100);
     });
     
-    // Also listen for resize (for desktop/simulator)
+    // Also listen for resize (works when orientationchange doesn't)
     window.addEventListener('resize', () => {
+        console.log('🔄 resize event fired!');
         updateLayoutForOrientation();
     });
     
