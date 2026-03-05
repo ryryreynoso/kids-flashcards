@@ -1258,7 +1258,13 @@
             backBtn.style.borderRadius = '15px';
             backBtn.style.marginBottom = '10px';
             backBtn.textContent = '⬅️ Back';
-            backBtn.onclick = () => showFolderPrograms(currentFolder || Object.keys(folders)[0]);
+            backBtn.onclick = () => {
+                if (currentFolder) {
+                    showFolderPrograms(currentFolder);
+                } else {
+                    showFolderSelectionScreen();
+                }
+            };
             container.appendChild(backBtn);
             
             // Create grid container for photos
@@ -1485,6 +1491,9 @@
             const container = document.getElementById('cardsContainer');
             const promptText = document.getElementById('promptText');
             
+            // Track current folder
+            currentFolder = folderName;
+            
             promptText.textContent = `Choose a Program from ${folderName}`;
             
             container.innerHTML = '';
@@ -1521,7 +1530,10 @@
             backBtn.style.borderRadius = '15px';
             backBtn.style.boxShadow = '0 6px 15px rgba(0,0,0,0.15)';
             backBtn.textContent = '⬅️ Back to Folders';
-            backBtn.onclick = () => showFolderSelectionScreen();
+            backBtn.onclick = () => {
+                currentFolder = null;
+                showFolderSelectionScreen();
+            };
             container.appendChild(backBtn);
             
             // Program buttons with colorful gradients
