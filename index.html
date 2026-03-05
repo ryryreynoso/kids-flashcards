@@ -671,7 +671,7 @@
     
     <div class="container">
         <div class="header">
-            <div class="round-indicator" id="roundIndicator" style="display: none;"></div>
+            <div class="round-indicator" id="trialIndicator" style="display: none;"></div>
             <div class="prompt">
                 <span class="emoji-decoration">✨</span>
                 <span id="promptText">Touch Cat!</span>
@@ -690,7 +690,7 @@
     </div>
     
     <div class="controls">
-        <button class="btn btn-primary" onclick="resetGame()">New Set 🔄</button>
+        <button class="btn btn-primary" onclick="resetGame()">📁 Back to Folders</button>
         <button class="btn btn-secondary" onclick="showSettings()">⚙️ Settings</button>
     </div>
     
@@ -718,8 +718,8 @@
                 </div>
                 
                 <div style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Number of Rounds:</label>
-                    <input type="number" id="maxRoundsInput" min="1" value="5" placeholder="Default: 5 rounds" 
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Number of Trials:</label>
+                    <input type="number" id="maxTrialsInput" min="1" value="5" placeholder="Default: 5 trials" 
                            style="width: 100%; padding: 12px; border: 2px solid #667eea; border-radius: 10px; font-size: 16px; font-family: 'Fredoka', sans-serif;">
                     <p style="font-size: 12px; color: #999; margin-top: 5px;">How many correct answers to complete the game</p>
                 </div>
@@ -907,10 +907,10 @@
         let folders = {}; // Store folders: { folderName: [categoryNames] }
         let currentFolder = null; // Currently selected folder
         let gameMode = 'setup'; // 'setup', 'playing', or 'results'
-        let currentRound = 0;
-        let totalRounds = -1; // -1 means unlimited
+        let currentTrial = 0;
+        let totalTrials = -1; // -1 means unlimited
         let totalMistakes = 0;
-        let roundMistakes = 0;
+        let trialMistakes = 0;
         let showingSettings = false;
         
         // Firebase Configuration
@@ -1156,7 +1156,7 @@
         let settings = {
             numCards: 3,
             cardLayout: 'horizontal', // 'horizontal' or 'vertical'
-            maxRounds: 5 // Default to 5 rounds
+            maxTrials: 5 // Default to 5 trials
         };
         
         const successMessages = [
@@ -1204,19 +1204,131 @@
             console.log('currentCards selected:', currentCards);
         }
         
+        function showFolderSelectionScreen() {
+            const container = document.getElementById('cardsContainer');
+            const promptText = document.getElementById('promptText');
+            const trialIndicator = document.getElementById('trialIndicator');
+            
+            gameMode = 'folder-select';
+            trialIndicator.style.display = 'none';
+            promptText.textContent = 'Choose a Folder!';
+            
+            container.innerHTML = '';
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.gap = '15px';
+            container.style.padding = '20px';
+            container.style.maxWidth = '600px';
+            container.style.margin = '0 auto';
+            
+            const folderKeys = Object.keys(folders);
+            
+            if (folderKeys.length === 0) {
+                // No folders yet - show message and settings button
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <p style="font-size: 24px; color: white; margin-bottom: 30px;">
+                            No folders created yet!
+                        </p>
+                        <p style="font-size: 18px; color: rgba(255,255,255,0.8); margin-bottom: 30px;">
+                            Create folders to organize your programs by student or theme.
+                        </p>
+                        <button class="category-btn" onclick="showSettings()" 
+                                style="width: 100%; max-width: 400px; font-size: 20px; padding: 20px;">
+                            ⚙️ Open Settings to Create Folders
+                        </button>
+                    </div>
+                `;
+            } else {
+                // Show folder buttons
+                folderKeys.forEach(folderName => {
+                    const folderBtn = document.createElement('button');
+                    folderBtn.className = 'category-btn';
+                    folderBtn.style.width = '100%';
+                    folderBtn.style.fontSize = '20px';
+                    folderBtn.style.padding = '20px';
+                    
+                    const programCount = (folders[folderName] || []).length;
+                    folderBtn.textContent = `📁 ${folderName} (${programCount} programs)`;
+                    
+                    folderBtn.onclick = () => showFolderPrograms(folderName);
+                    
+                    container.appendChild(folderBtn);
+                });
+            }
+        }
+        
+        function showFolderPrograms(folderName) {
+            const container = document.getElementById('cardsContainer');
+            const promptText = document.getElementById('promptText');
+            
+            promptText.textContent = `Choose a Program from ${folderName}`;
+            
+            container.innerHTML = '';
+            container.style.display = 'flex';
+            container.style.flexDirection = 'column';
+            container.style.gap = '15px';
+            
+            const programsInFolder = folders[folderName] || [];
+            
+            if (programsInFolder.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <p style="font-size: 20px; color: white; margin-bottom: 20px;">
+                            No programs in this folder yet!
+                        </p>
+                        <button class="category-btn" onclick="showFolderSelectionScreen()" 
+                                style="width: 100%; max-width: 400px;">
+                            ⬅️ Back to Folders
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Back button
+            const backBtn = document.createElement('button');
+            backBtn.className = 'category-btn';
+            backBtn.style.background = 'linear-gradient(135deg, #999 0%, #666 100())';
+            backBtn.style.color = 'white';
+            backBtn.textContent = '⬅️ Back to Folders';
+            backBtn.onclick = () => showFolderSelectionScreen();
+            container.appendChild(backBtn);
+            
+            // Program buttons
+            programsInFolder.forEach(categoryName => {
+                if (customCategories[categoryName]) {
+                    const programBtn = document.createElement('button');
+                    programBtn.className = 'category-btn';
+                    programBtn.style.fontSize = '18px';
+                    programBtn.style.padding = '18px';
+                    programBtn.textContent = `🎴 ${categoryName} (${customCategories[categoryName].length} images)`;
+                    
+                    programBtn.onclick = () => {
+                        currentCategory = 'custom:' + categoryName;
+                        uploadedCards = customCategories[categoryName];
+                        selectRandomCards();
+                        showSetupScreen();
+                    };
+                    
+                    container.appendChild(programBtn);
+                }
+            });
+        }
+        
         function showSetupScreen() {
-            console.log('showSetupScreen called, currentRound:', currentRound);
+            console.log('showSetupScreen called, currentTrial:', currentTrial);
             gameMode = 'setup';
             const container = document.getElementById('cardsContainer');
             const prompt = document.getElementById('promptText');
             const controls = document.querySelector('.controls');
-            const roundIndicator = document.getElementById('roundIndicator');
+            const trialIndicator = document.getElementById('trialIndicator');
             
             // Only show setup at the very beginning (round 0)
-            if (currentRound === 0) {
+            if (currentTrial === 0) {
                 console.log('Rendering setup screen with', currentCards.length, 'cards');
                 prompt.textContent = 'Choose what to find!';
-                roundIndicator.style.display = 'none';
+                trialIndicator.style.display = 'none';
                 container.innerHTML = '';
                 controls.style.display = 'flex'; // Show controls with settings button
                 
@@ -1268,7 +1380,7 @@
         function startRoundWithAnswer(card) {
             correctAnswer = card;
             gameMode = 'playing';
-            currentRound = 1; // Start at round 1
+            currentTrial = 1; // Start at trial 1
             renderPlayingCards();
             document.querySelector('.controls').style.display = 'flex';
         }
@@ -1276,7 +1388,7 @@
         function renderPlayingCards() {
             const container = document.getElementById('cardsContainer');
             const prompt = document.getElementById('promptText');
-            const roundIndicator = document.getElementById('roundIndicator');
+            const trialIndicator = document.getElementById('trialIndicator');
             
             // Clear all existing cards and reset any lingering styles
             const existingCards = container.querySelectorAll('.card, .card-wrapper');
@@ -1296,13 +1408,13 @@
             container.className = 'cards-container ' + settings.cardLayout;
             
             // Show round indicator if limited rounds
-            if (settings.maxRounds > 0) {
-                roundIndicator.style.display = 'inline-block';
-                roundIndicator.textContent = `Round ${currentRound} of ${settings.maxRounds}`;
+            if (settings.maxTrials > 0) {
+                trialIndicator.style.display = 'inline-block';
+                trialIndicator.textContent = `Trial ${currentTrial} of ${settings.maxTrials}`;
                 prompt.textContent = `Touch ${correctAnswer.label}!`;
             } else {
-                roundIndicator.style.display = 'inline-block';
-                roundIndicator.textContent = `Round ${currentRound}`;
+                trialIndicator.style.display = 'inline-block';
+                trialIndicator.textContent = `Trial ${currentTrial}`;
                 prompt.textContent = `Touch ${correctAnswer.label}!`;
             }
             
@@ -1377,20 +1489,20 @@
                 
                 // Show success message over the card
                 showSuccessOverCard(cardEl);
-                createConfetti();
+                createConfetti(cardEl); // Pass the card element for explosion effect
                 
                 // Increment round counter
-                currentRound++;
+                currentTrial++;
                 
-                // Round complete - check if game is over
-                if (settings.maxRounds > 0 && currentRound > settings.maxRounds) {
+                // Trial complete - check if game is over
+                if (settings.maxTrials > 0 && currentTrial > settings.maxTrials) {
                     setTimeout(() => {
                         showResults();
                     }, 2000);
                 } else {
                     // Continue to next round with same cards and same correct answer
                     setTimeout(() => {
-                        roundMistakes = 0;
+                        trialMistakes = 0;
                         renderPlayingCards();
                     }, 1500);
                 }
@@ -1399,7 +1511,7 @@
                 playWrongSound();
                 
                 // Track mistakes
-                roundMistakes++;
+                trialMistakes++;
                 totalMistakes++;
                 
                 // Visual feedback - red flash
@@ -1465,23 +1577,63 @@
             }, 600);
         }
         
-        function createConfetti() {
+        function createConfetti(cardEl) {
             const container = document.querySelector('.confetti-container');
             const colors = ['#ff6b6b', '#ffd93d', '#6bcf7f', '#667eea', '#f093fb', '#ff8c42'];
             
-            // MUCH MORE CONFETTI - 300 pieces!
+            // Get card position for explosion origin
+            const rect = cardEl.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            // EXPLOSIVE CONFETTI - 300 pieces bursting from the card!
             for (let i = 0; i < 300; i++) {
                 const confetti = document.createElement('div');
                 confetti.className = 'confetti';
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.top = '-20px';
+                
+                // Start at card center
+                confetti.style.left = centerX + 'px';
+                confetti.style.top = centerY + 'px';
                 confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                const duration = (Math.random() * 1 + 1.5);
-                const delay = Math.random() * 0.3;
-                confetti.style.animation = `confettiFall ${duration}s linear ${delay}s forwards`;
+                
+                // Random explosion direction and distance
+                const angle = Math.random() * Math.PI * 2; // Random angle in full circle
+                const velocity = Math.random() * 300 + 200; // Random speed
+                const endX = centerX + Math.cos(angle) * velocity;
+                const endY = centerY + Math.sin(angle) * velocity;
+                
+                // Rotate for effect
+                const rotation = Math.random() * 720 - 360;
+                
+                // Animate explosion
+                confetti.animate([
+                    { 
+                        left: centerX + 'px', 
+                        top: centerY + 'px',
+                        opacity: 1,
+                        transform: 'scale(0) rotate(0deg)'
+                    },
+                    { 
+                        left: endX + 'px', 
+                        top: endY + 'px',
+                        opacity: 1,
+                        transform: `scale(1) rotate(${rotation}deg)`,
+                        offset: 0.7
+                    },
+                    { 
+                        left: endX + 'px', 
+                        top: (endY + 500) + 'px',
+                        opacity: 0,
+                        transform: `scale(0.5) rotate(${rotation + 180}deg)`
+                    }
+                ], {
+                    duration: 2000,
+                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                });
+                
                 container.appendChild(confetti);
                 
-                setTimeout(() => confetti.remove(), (duration + delay) * 1000 + 500);
+                setTimeout(() => confetti.remove(), 2100);
             }
         }
         
@@ -1499,7 +1651,7 @@
             // Always celebrate completing the rounds!
             let statsHTML = `
                 <div style="margin-bottom: 25px; font-size: clamp(28px, 5vw, 42px);">
-                    <span class="stat-highlight stat-perfect">🎊 ${settings.maxRounds} Rounds Complete! 🎊</span>
+                    <span class="stat-highlight stat-perfect">🎊 ${settings.maxTrials} Trials Complete! 🎊</span>
                 </div>
             `;
             
@@ -1552,10 +1704,10 @@
         }
         
         function resetGame() {
-            currentRound = 0;
+            currentTrial = 0;
             totalMistakes = 0;
-            roundMistakes = 0;
-            gameMode = 'setup';
+            trialMistakes = 0;
+            gameMode = 'folder-select';
             
             const container = document.getElementById('cardsContainer');
             const resultsScreen = document.getElementById('resultsScreen');
@@ -1563,8 +1715,7 @@
             container.style.display = 'flex';
             resultsScreen.classList.remove('show');
             
-            selectRandomCards();
-            showSetupScreen();
+            showFolderSelectionScreen();
         }
         
         function showSettings() {
@@ -1573,7 +1724,7 @@
             // Update settings UI
             document.getElementById('numCardsInput').value = settings.numCards;
             document.getElementById('layoutSelect').value = settings.cardLayout;
-            document.getElementById('maxRoundsInput').value = settings.maxRounds === -1 ? '' : settings.maxRounds;
+            document.getElementById('maxTrialsInput').value = settings.maxTrials === -1 ? '' : settings.maxTrials;
             
             // Update custom programs list
             updateCustomCategoriesList();
@@ -1586,8 +1737,8 @@
         function saveSettings() {
             settings.numCards = parseInt(document.getElementById('numCardsInput').value) || 3;
             settings.cardLayout = document.getElementById('layoutSelect').value;
-            const roundsValue = document.getElementById('maxRoundsInput').value;
-            settings.maxRounds = roundsValue === '' ? 5 : parseInt(roundsValue);
+            const roundsValue = document.getElementById('maxTrialsInput').value;
+            settings.maxTrials = roundsValue === '' ? 5 : parseInt(roundsValue);
             
             closeSettings();
             resetGame();
@@ -2159,6 +2310,15 @@
                         folderBtn.title = 'Move to folder';
                         folderBtn.onclick = () => assignProgramToFolder(categoryName);
                         
+                        // Copy button
+                        const copyBtn = document.createElement('button');
+                        copyBtn.className = 'program-btn';
+                        copyBtn.style.flex = '0 0 60px';
+                        copyBtn.style.background = 'linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100())';
+                        copyBtn.textContent = '📋';
+                        copyBtn.title = 'Copy to another folder';
+                        copyBtn.onclick = () => copyProgramToFolder(categoryName);
+                        
                         // Edit button
                         const editBtn = document.createElement('button');
                         editBtn.className = 'program-btn';
@@ -2169,6 +2329,7 @@
                         
                         categoryDiv.appendChild(useBtn);
                         categoryDiv.appendChild(folderBtn);
+                        categoryDiv.appendChild(copyBtn);
                         categoryDiv.appendChild(editBtn);
                         container.appendChild(categoryDiv);
                     });
@@ -2265,8 +2426,39 @@
             document.getElementById('folderSelectModal').classList.add('show');
         }
         
+        async function copyProgramToFolder(categoryName) {
+            const folderKeys = Object.keys(folders);
+            
+            if (folderKeys.length === 0) {
+                alert('No folders exist yet! Create a folder first, then copy programs to it.');
+                return;
+            }
+            
+            // Set pending program
+            pendingProgramToMove = categoryName;
+            
+            // Update message for copying
+            document.getElementById('folderSelectMessage').textContent = `Copy "${categoryName}" to which folder?`;
+            
+            // Populate dropdown
+            const dropdown = document.getElementById('folderSelectDropdown');
+            dropdown.innerHTML = '';
+            
+            folderKeys.forEach(folderName => {
+                const option = document.createElement('option');
+                option.value = folderName;
+                option.textContent = folderName;
+                dropdown.appendChild(option);
+            });
+            
+            // Show modal with copy mode
+            document.getElementById('folderSelectModal').dataset.mode = 'copy';
+            document.getElementById('folderSelectModal').classList.add('show');
+        }
+        
         function closeFolderSelectModal() {
             document.getElementById('folderSelectModal').classList.remove('show');
+            document.getElementById('folderSelectModal').dataset.mode = '';
             pendingProgramToMove = null;
         }
         
@@ -2275,6 +2467,8 @@
             
             const selectedFolder = document.getElementById('folderSelectDropdown').value;
             const categoryName = pendingProgramToMove;
+            const modal = document.getElementById('folderSelectModal');
+            const isCopyMode = modal.dataset.mode === 'copy';
             
             // Add program to folder
             if (!folders[selectedFolder]) {
@@ -2286,6 +2480,11 @@
                 await saveProgramsToStorage();
                 closeFolderSelectModal();
                 updateFoldersAndCategoriesList();
+                
+                if (isCopyMode) {
+                    // Success message for copying
+                    alert(`✅ Copied "${categoryName}" to folder "${selectedFolder}"!`);
+                }
             } else {
                 alert(`"${categoryName}" is already in "${selectedFolder}"`);
             }
@@ -2333,8 +2532,7 @@
         
         // Initialize
         createStars();
-        selectRandomCards();
-        showSetupScreen();
+        showFolderSelectionScreen();
         // loadProgramsFromStorage is called automatically when Firebase is ready
     </script>
     
