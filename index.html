@@ -964,8 +964,27 @@
     let currentCards = [];
     let correctAnswer = null;
     let uploadedCards = [];
-    let customCategories = {}; // Store custom programs: { categoryName: [cards] }
-    let folders = {}; // Store folders: { folderName: [categoryNames] }
+    
+    // Try to restore from localStorage backup first
+    let customCategories = {};
+    let folders = {};
+    try {
+        const backupCats = localStorage.getItem('backup-categories');
+        const backupFolders = localStorage.getItem('backup-folders');
+        if (backupCats) {
+            customCategories = JSON.parse(backupCats);
+            console.log('📂 Restored categories from localStorage:', Object.keys(customCategories).length);
+        }
+        if (backupFolders) {
+            folders = JSON.parse(backupFolders);
+            console.log('📁 Restored folders from localStorage:', Object.keys(folders).length);
+        }
+    } catch(e) {
+        console.warn('Could not restore from localStorage:', e);
+        customCategories = {};
+        folders = {};
+    }
+    
     let currentFolder = null; // Currently selected folder
     let gameMode = 'setup'; // 'setup', 'playing', or 'results'
     let currentTrial = 0;
@@ -1060,6 +1079,16 @@
                 folders = newData.folders || {};
                 console.log('✅ Loaded programs:', Object.keys(customCategories));
                 console.log('📁 Loaded folders:', Object.keys(folders));
+                
+                // Backup to localStorage
+                try {
+                    localStorage.setItem('backup-categories', JSON.stringify(customCategories));
+                    localStorage.setItem('backup-folders', JSON.stringify(folders));
+                    console.log('💾 Backed up to localStorage');
+                } catch(e) {
+                    console.warn('Could not backup to localStorage:', e);
+                }
+                
                 updateFoldersAndCategoriesList();
                 
                 // Update folder selection screen if that's what's showing
