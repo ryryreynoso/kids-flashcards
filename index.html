@@ -145,12 +145,13 @@
         background: white;
         border-radius: 30px;
         padding: 20px;
-        width: calc(28vw - 20px);  /* Smaller % for better fit */
-        height: calc(28vw - 20px);
-        max-width: 280px;  /* Don't get too big on large screens */
-        max-height: 280px;
-        min-width: 160px;  /* Smaller minimum for phones */
-        min-height: 160px;
+        /* Responsive sizing based on orientation */
+        width: calc(90vw - 40px);  /* Portrait: almost full width */
+        height: calc(90vw - 40px);
+        max-width: 400px;
+        max-height: 400px;
+        min-width: 200px;
+        min-height: 200px;
         flex-shrink: 0;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -168,13 +169,47 @@
         -webkit-tap-highlight-color: transparent;
     }
     
-    /* Phone landscape - smaller cards to fit 3 */
+    /* Landscape - maximize horizontal space, fit 3 cards */
+    @media (orientation: landscape) {
+        .card {
+            width: calc(30vw - 30px);  /* 30% of width for 3 cards */
+            height: calc(30vw - 30px);
+            max-width: 350px;
+            max-height: 350px;
+        }
+    }
+    
+    /* Portrait - larger cards stacked vertically */
+    @media (orientation: portrait) {
+        .card {
+            width: calc(70vw - 40px);  /* 70% of width, centered */
+            height: calc(70vw - 40px);
+            max-width: 400px;
+            max-height: 400px;
+        }
+    }
+    
+    /* Phone landscape - smaller to fit 3 */
     @media (max-width: 767px) and (orientation: landscape) {
         .card {
-            width: calc(26vw - 20px);
-            height: calc(26vw - 20px);
-            min-width: 140px;
-            min-height: 140px;
+            width: calc(28vw - 20px);
+            height: calc(28vw - 20px);
+            max-width: 200px;
+            max-height: 200px;
+            min-width: 150px;
+            min-height: 150px;
+        }
+    }
+    
+    /* Tablet/iPad landscape - bigger cards */
+    @media (min-width: 768px) and (orientation: landscape) {
+        .card {
+            width: calc(30vw - 30px);
+            height: calc(30vw - 30px);
+            max-width: 350px;
+            max-height: 350px;
+            min-width: 250px;
+            min-height: 250px;
         }
     }
     
