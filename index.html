@@ -801,6 +801,11 @@
                     ➕ New Program
                 </button>
             </div>
+            
+            <!-- Debug button -->
+            <button class="program-btn" onclick="debugFirebase()" style="width: 100%; margin-top: 10px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);">
+                🔍 Debug: Check Firebase Data
+            </button>
         </div>
         
         <div style="border-top: 2px solid #eee; padding-top: 30px; margin-top: 30px;">
@@ -2696,6 +2701,38 @@
                 container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No folders or programs yet. Create one to get started!</p>';
             }
         }
+    }
+    
+    async function debugFirebase() {
+        if (!database) {
+            alert('Firebase not initialized!');
+            return;
+        }
+        
+        const ref = database.ref('flashcard-data');
+        const snapshot = await ref.once('value');
+        const data = snapshot.val();
+        
+        let message = '=== FIREBASE DATA ===\n\n';
+        message += 'Categories: ' + (data?.categories ? Object.keys(data.categories).length : 0) + '\n';
+        message += 'Folders: ' + (data?.folders ? Object.keys(data.folders).length : 0) + '\n\n';
+        
+        message += '=== IN MEMORY ===\n\n';
+        message += 'customCategories: ' + Object.keys(customCategories).length + '\n';
+        message += 'folders: ' + Object.keys(folders).length + '\n\n';
+        
+        if (data?.folders) {
+            message += '=== FOLDER CONTENTS ===\n';
+            Object.keys(data.folders).forEach(folderName => {
+                const programs = data.folders[folderName];
+                message += folderName + ': ' + (programs?.length || 0) + ' programs\n';
+            });
+        }
+        
+        alert(message);
+        console.log('📊 Firebase Data:', data);
+        console.log('📊 Memory - customCategories:', customCategories);
+        console.log('📊 Memory - folders:', folders);
     }
     
     function createNewFolder() {
