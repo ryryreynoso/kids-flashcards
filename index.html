@@ -2285,8 +2285,15 @@
         const container = document.getElementById('cardsContainer');
         const resultsScreen = document.getElementById('resultsScreen');
         
+        // Clear any lingering confetti or elements
+        const confetti = document.querySelectorAll('.confetti');
+        confetti.forEach(c => c.remove());
+        
+        // Clear container completely
+        container.innerHTML = '';
         container.style.display = 'flex';
         resultsScreen.classList.remove('show');
+        resultsScreen.style.display = 'none';
         
         showFolderSelectionScreen();
     }
