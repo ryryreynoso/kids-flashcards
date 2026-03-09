@@ -1425,7 +1425,7 @@
             photoCard.appendChild(label);
             photoCard.appendChild(checkmark);
             
-            photoCard.onclick = () => {
+            const handlePhotoClick = () => {
                 const isSelected = selectedPhotos.includes(photo);
                 
                 if (isSelected) {
@@ -1453,6 +1453,12 @@
                 }
             };
             
+            photoCard.onclick = handlePhotoClick;
+            photoCard.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                handlePhotoClick();
+            });
+            
             photoGrid.appendChild(photoCard);
         });
         
@@ -1474,11 +1480,22 @@
         startBtn.style.cursor = 'not-allowed';
         startBtn.disabled = true;
         startBtn.textContent = `Start with Selected Photos`;
-        startBtn.onclick = () => {
+        
+        let startClickHandled = false;
+        const handleStartClick = () => {
+            if (startClickHandled || startBtn.disabled) return;
+            startClickHandled = true;
+            startBtn.style.opacity = '0.5';
             uploadedCards = selectedPhotos;
             selectRandomCards();
             showSetupScreen();
         };
+        
+        startBtn.onclick = handleStartClick;
+        startBtn.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            handleStartClick();
+        });
         
         container.appendChild(startBtn);
     }
