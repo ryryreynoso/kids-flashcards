@@ -1490,7 +1490,12 @@
             photoCard.appendChild(label);
             photoCard.appendChild(checkmark);
             
-            const handlePhotoClick = () => {
+            const handlePhotoClick = (e) => {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                
                 const isSelected = selectedPhotos.includes(photo);
                 
                 console.log('Photo clicked:', photo.label);
@@ -1512,29 +1517,30 @@
                 console.log('After click, selected:', selectedPhotos.length);
                 console.log('Required:', settings.numCards);
                 
-                // Update start button
+                // Update start button - FORCE update every time
                 if (selectedPhotos.length === settings.numCards) {
                     console.log('✅ ENABLING start button');
                     startBtn.disabled = false;
                     startBtn.style.opacity = '1';
                     startBtn.style.cursor = 'pointer';
+                    startBtn.style.background = 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)';
                     startClickHandled = false; // RESET flag when button becomes enabled
                 } else {
                     console.log('❌ DISABLING start button');
                     startBtn.disabled = true;
                     startBtn.style.opacity = '0.5';
                     startBtn.style.cursor = 'not-allowed';
+                    startBtn.style.background = 'linear-gradient(135deg, #999 0%, #666 100())';
                 }
                 
                 console.log('Button state - disabled:', startBtn.disabled, 'opacity:', startBtn.style.opacity);
             };
             
-            photoCard.onclick = handlePhotoClick;
-            photoCard.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                handlePhotoClick();
-            });
+            // Use both click and touchstart for maximum compatibility
+            photoCard.addEventListener('click', handlePhotoClick);
+            photoCard.addEventListener('touchstart', (e) => {
+                handlePhotoClick(e);
+            }, { passive: false });
             
             photoGrid.appendChild(photoCard);
         });
@@ -1551,14 +1557,24 @@
         }
         
         // Add start button event handlers
-        const handleStartClick = () => {
+        const handleStartClick = (e) => {
+            if (e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
             console.log('🚀 Start button clicked!');
             console.log('startClickHandled:', startClickHandled);
             console.log('startBtn.disabled:', startBtn.disabled);
             console.log('selectedPhotos.length:', selectedPhotos.length);
             
-            if (startClickHandled || startBtn.disabled) {
-                console.log('❌ Click blocked - handled:', startClickHandled, 'disabled:', startBtn.disabled);
+            if (startClickHandled) {
+                console.log('❌ Click blocked - already handled');
+                return;
+            }
+            
+            if (startBtn.disabled) {
+                console.log('❌ Click blocked - button disabled');
                 return;
             }
             
@@ -1570,11 +1586,8 @@
             showSetupScreen();
         };
         
-        startBtn.onclick = handleStartClick;
-        startBtn.addEventListener('touchend', (e) => {
-            e.preventDefault();
-            handleStartClick();
-        });
+        startBtn.addEventListener('click', handleStartClick);
+        startBtn.addEventListener('touchstart', handleStartClick, { passive: false });
         
         container.appendChild(startBtn);
     }
