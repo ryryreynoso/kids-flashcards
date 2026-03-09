@@ -1352,6 +1352,7 @@
         
         const allPhotos = customCategories[categoryName];
         let selectedPhotos = [];
+        let startClickHandled = false; // Define here so all handlers can access it
         
         // Back button
         const backBtn = document.createElement('button');
@@ -1482,7 +1483,6 @@
         startBtn.disabled = true;
         startBtn.textContent = `Start with Selected Photos`;
         
-        let startClickHandled = false;
         const handleStartClick = () => {
             if (startClickHandled || startBtn.disabled) return;
             startClickHandled = true;
