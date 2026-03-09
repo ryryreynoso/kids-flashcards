@@ -1382,12 +1382,21 @@
     }
     
     function showPhotoSelectionScreen(categoryName) {
+        console.log('🔄 PHOTO SELECTION SCREEN STARTING');
+        console.log('Category:', categoryName);
+        
+        // COMPLETE RESET - clear any stale game state
+        gameMode = 'photo-selection';
+        currentTrial = 0;
+        
         const container = document.getElementById('cardsContainer');
         const promptText = document.getElementById('promptText');
+        const trialIndicator = document.getElementById('trialIndicator');
         
+        trialIndicator.style.display = 'none'; // Hide trial indicator
         promptText.textContent = `Select ${settings.numCards} Photos to Use`;
         
-        container.innerHTML = '';
+        container.innerHTML = ''; // Clear everything
         container.style.display = 'flex';
         container.style.flexDirection = 'column';
         container.style.gap = '15px';
