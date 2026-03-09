@@ -151,6 +151,8 @@
         gap: 2vw;  /* Responsive gap - 2% of viewport width */
         flex-wrap: wrap;
         max-width: 100%;
+        max-height: calc(100vh - 200px); /* Limit height, leave room for header */
+        overflow-y: auto; /* Allow scrolling to see all cards */
         margin: 0 auto;
         padding: 20px;
         min-height: 320px;
