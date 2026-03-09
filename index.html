@@ -1419,13 +1419,15 @@
         startBtn.style.fontWeight = '700';
         startBtn.style.padding = '20px';
         startBtn.style.marginTop = '20px';
-        startBtn.style.background = 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100())';
+        startBtn.style.background = 'linear-gradient(135deg, #999 0%, #666 100%)';
         startBtn.style.color = 'white';
         startBtn.style.borderRadius = '18px';
         startBtn.style.opacity = '0.5';
         startBtn.style.cursor = 'not-allowed';
-        startBtn.disabled = true;
+        // DON'T use disabled attribute - it blocks clicks on iOS
         startBtn.textContent = `Start with Selected Photos`;
+        
+        let canClickStart = false; // Use this instead of disabled
         
         // Back button
         const backBtn = document.createElement('button');
@@ -1529,20 +1531,20 @@
                 // Update start button - FORCE update every time
                 if (selectedPhotos.length === settings.numCards) {
                     console.log('✅ ENABLING start button');
-                    startBtn.disabled = false;
+                    canClickStart = true;
                     startBtn.style.opacity = '1';
                     startBtn.style.cursor = 'pointer';
                     startBtn.style.background = 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)';
                     startClickHandled = false; // RESET flag when button becomes enabled
                 } else {
                     console.log('❌ DISABLING start button');
-                    startBtn.disabled = true;
+                    canClickStart = false;
                     startBtn.style.opacity = '0.5';
                     startBtn.style.cursor = 'not-allowed';
                     startBtn.style.background = 'linear-gradient(135deg, #999 0%, #666 100())';
                 }
                 
-                console.log('Button state - disabled:', startBtn.disabled, 'opacity:', startBtn.style.opacity);
+                console.log('Button state - disabled:', canClickStart, 'opacity:', startBtn.style.opacity);
             };
             
             // Force photo card to be clickable - use simple onclick
@@ -1559,7 +1561,7 @@
         console.log('📊 After creating grid - selectedPhotos.length:', selectedPhotos.length);
         if (selectedPhotos.length === settings.numCards) {
             console.log('⚠️ Photos already selected, enabling button');
-            startBtn.disabled = false;
+            canClickStart = true;
             startBtn.style.opacity = '1';
             startBtn.style.cursor = 'pointer';
         }
@@ -1568,7 +1570,7 @@
         const handleStartClick = (e) => {
             console.log('🚀 Start button clicked!');
             console.log('startClickHandled:', startClickHandled);
-            console.log('startBtn.disabled:', startBtn.disabled);
+            console.log('canClickStart:', canClickStart);
             console.log('selectedPhotos.length:', selectedPhotos.length);
             
             if (startClickHandled) {
@@ -1576,8 +1578,8 @@
                 return;
             }
             
-            if (startBtn.disabled) {
-                console.log('❌ Click blocked - button disabled');
+            if (!canClickStart) {
+                console.log('❌ Click blocked - button not enabled');
                 return;
             }
             
