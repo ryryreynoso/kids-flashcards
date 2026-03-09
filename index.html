@@ -1824,7 +1824,7 @@
                     
                     // Add both click and touch events for better mobile support
                     let clickHandled = false;
-                    const handleClick = () => {
+                    const handleClick = (e) => {
                         if (clickHandled) return;
                         clickHandled = true;
                         wrapper.style.opacity = '0.7'; // Visual feedback
@@ -1833,12 +1833,12 @@
                             startRoundWithAnswer(card);
                         }, 150);
                     };
-                    wrapper.addEventListener('click', handleClick, { once: true });
+                    wrapper.addEventListener('click', handleClick);
                     wrapper.addEventListener('touchend', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        handleClick();
-                    }, { once: true });
+                        handleClick(e);
+                    });
                     container.appendChild(wrapper);
                     console.log('Added photo card wrapper to container');
                 } else {
@@ -1852,7 +1852,7 @@
                     
                     // Add both click and touch events for better mobile support
                     let clickHandled = false;
-                    const handleClick = () => {
+                    const handleClick = (e) => {
                         if (clickHandled) return;
                         clickHandled = true;
                         cardEl.style.opacity = '0.7'; // Visual feedback
@@ -1861,12 +1861,12 @@
                             startRoundWithAnswer(card);
                         }, 150);
                     };
-                    cardEl.addEventListener('click', handleClick, { once: true });
+                    cardEl.addEventListener('click', handleClick);
                     cardEl.addEventListener('touchend', (e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        handleClick();
-                    }, { once: true });
+                        handleClick(e);
+                    });
                     container.appendChild(cardEl);
                     console.log('Added emoji card to container:', card.label);
                 }
