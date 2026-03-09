@@ -1397,6 +1397,10 @@
         let selectedPhotos = [];
         let startClickHandled = false; // Define here so all handlers can access it
         
+        console.log('📸 Photo selection screen loaded');
+        console.log('Available photos:', allPhotos.length);
+        console.log('Need to select:', settings.numCards);
+        
         // Create start button FIRST so photo handlers can reference it
         const startBtn = document.createElement('button');
         startBtn.className = 'category-btn';
@@ -1536,6 +1540,15 @@
         });
         
         container.appendChild(photoGrid);
+        
+        // Debug: Check if any photos were pre-selected somehow
+        console.log('📊 After creating grid - selectedPhotos.length:', selectedPhotos.length);
+        if (selectedPhotos.length === settings.numCards) {
+            console.log('⚠️ Photos already selected, enabling button');
+            startBtn.disabled = false;
+            startBtn.style.opacity = '1';
+            startBtn.style.cursor = 'pointer';
+        }
         
         // Add start button event handlers
         const handleStartClick = () => {
