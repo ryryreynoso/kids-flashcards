@@ -1545,11 +1545,10 @@
                 console.log('Button state - disabled:', startBtn.disabled, 'opacity:', startBtn.style.opacity);
             };
             
-            // Use both click and touchstart for maximum compatibility
-            photoCard.addEventListener('click', handlePhotoClick);
-            photoCard.addEventListener('touchstart', (e) => {
-                handlePhotoClick(e);
-            }, { passive: false });
+            // Force photo card to be clickable - use simple onclick
+            photoCard.style.cursor = 'pointer';
+            photoCard.style.touchAction = 'manipulation';
+            photoCard.onclick = handlePhotoClick;
             
             photoGrid.appendChild(photoCard);
         });
@@ -1567,11 +1566,6 @@
         
         // Add start button event handlers
         const handleStartClick = (e) => {
-            if (e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            
             console.log('🚀 Start button clicked!');
             console.log('startClickHandled:', startClickHandled);
             console.log('startBtn.disabled:', startBtn.disabled);
@@ -1590,13 +1584,19 @@
             console.log('✅ Proceeding with start...');
             startClickHandled = true;
             startBtn.style.opacity = '0.5';
-            uploadedCards = selectedPhotos;
-            selectRandomCards();
-            showSetupScreen();
+            
+            setTimeout(() => {
+                uploadedCards = selectedPhotos;
+                selectRandomCards();
+                showSetupScreen();
+            }, 100);
         };
         
-        startBtn.addEventListener('click', handleStartClick);
-        startBtn.addEventListener('touchstart', handleStartClick, { passive: false });
+        // Force button to be clickable
+        startBtn.style.pointerEvents = 'auto';
+        startBtn.style.touchAction = 'manipulation';
+        
+        startBtn.onclick = handleStartClick;
         
         container.appendChild(startBtn);
     }
