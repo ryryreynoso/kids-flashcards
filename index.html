@@ -1761,7 +1761,19 @@
                     wrapper.appendChild(cardEl);
                     wrapper.appendChild(label);
                     
-                    wrapper.addEventListener('click', () => startRoundWithAnswer(card));
+                    // Add both click and touch events for better mobile support
+                    let clickHandled = false;
+                    const handleClick = () => {
+                        if (clickHandled) return;
+                        clickHandled = true;
+                        wrapper.style.opacity = '0.5'; // Visual feedback
+                        setTimeout(() => startRoundWithAnswer(card), 100);
+                    };
+                    wrapper.addEventListener('click', handleClick);
+                    wrapper.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        handleClick();
+                    });
                     container.appendChild(wrapper);
                     console.log('Added photo card wrapper to container');
                 } else {
@@ -1773,7 +1785,19 @@
                         <div class="card-label">${card.label}</div>
                     `;
                     
-                    cardEl.addEventListener('click', () => startRoundWithAnswer(card));
+                    // Add both click and touch events for better mobile support
+                    let clickHandled = false;
+                    const handleClick = () => {
+                        if (clickHandled) return;
+                        clickHandled = true;
+                        cardEl.style.opacity = '0.5'; // Visual feedback
+                        setTimeout(() => startRoundWithAnswer(card), 100);
+                    };
+                    cardEl.addEventListener('click', handleClick);
+                    cardEl.addEventListener('touchend', (e) => {
+                        e.preventDefault();
+                        handleClick();
+                    });
                     container.appendChild(cardEl);
                     console.log('Added emoji card to container:', card.label);
                 }
