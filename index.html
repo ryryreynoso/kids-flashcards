@@ -1489,6 +1489,9 @@
             const handlePhotoClick = () => {
                 const isSelected = selectedPhotos.includes(photo);
                 
+                console.log('Photo clicked:', photo.label);
+                console.log('Currently selected:', selectedPhotos.length);
+                
                 if (isSelected) {
                     // Deselect
                     selectedPhotos = selectedPhotos.filter(p => p !== photo);
@@ -1502,22 +1505,30 @@
                     checkmark.style.display = 'flex';
                 }
                 
+                console.log('After click, selected:', selectedPhotos.length);
+                console.log('Required:', settings.numCards);
+                
                 // Update start button
                 if (selectedPhotos.length === settings.numCards) {
+                    console.log('✅ ENABLING start button');
                     startBtn.disabled = false;
                     startBtn.style.opacity = '1';
                     startBtn.style.cursor = 'pointer';
                     startClickHandled = false; // RESET flag when button becomes enabled
                 } else {
+                    console.log('❌ DISABLING start button');
                     startBtn.disabled = true;
                     startBtn.style.opacity = '0.5';
                     startBtn.style.cursor = 'not-allowed';
                 }
+                
+                console.log('Button state - disabled:', startBtn.disabled, 'opacity:', startBtn.style.opacity);
             };
             
             photoCard.onclick = handlePhotoClick;
             photoCard.addEventListener('touchend', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 handlePhotoClick();
             });
             
@@ -1528,7 +1539,17 @@
         
         // Add start button event handlers
         const handleStartClick = () => {
-            if (startClickHandled || startBtn.disabled) return;
+            console.log('🚀 Start button clicked!');
+            console.log('startClickHandled:', startClickHandled);
+            console.log('startBtn.disabled:', startBtn.disabled);
+            console.log('selectedPhotos.length:', selectedPhotos.length);
+            
+            if (startClickHandled || startBtn.disabled) {
+                console.log('❌ Click blocked - handled:', startClickHandled, 'disabled:', startBtn.disabled);
+                return;
+            }
+            
+            console.log('✅ Proceeding with start...');
             startClickHandled = true;
             startBtn.style.opacity = '0.5';
             uploadedCards = selectedPhotos;
