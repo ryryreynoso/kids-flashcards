@@ -1397,6 +1397,23 @@
         let selectedPhotos = [];
         let startClickHandled = false; // Define here so all handlers can access it
         
+        // Create start button FIRST so photo handlers can reference it
+        const startBtn = document.createElement('button');
+        startBtn.className = 'category-btn';
+        startBtn.style.width = '100%';
+        startBtn.style.maxWidth = '400px';
+        startBtn.style.fontSize = '20px';
+        startBtn.style.fontWeight = '700';
+        startBtn.style.padding = '20px';
+        startBtn.style.marginTop = '20px';
+        startBtn.style.background = 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100())';
+        startBtn.style.color = 'white';
+        startBtn.style.borderRadius = '18px';
+        startBtn.style.opacity = '0.5';
+        startBtn.style.cursor = 'not-allowed';
+        startBtn.disabled = true;
+        startBtn.textContent = `Start with Selected Photos`;
+        
         // Back button
         const backBtn = document.createElement('button');
         backBtn.className = 'category-btn';
@@ -1509,23 +1526,7 @@
         
         container.appendChild(photoGrid);
         
-        // Start button
-        const startBtn = document.createElement('button');
-        startBtn.className = 'category-btn';
-        startBtn.style.width = '100%';
-        startBtn.style.maxWidth = '400px';
-        startBtn.style.fontSize = '20px';
-        startBtn.style.fontWeight = '700';
-        startBtn.style.padding = '20px';
-        startBtn.style.marginTop = '20px';
-        startBtn.style.background = 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100())';
-        startBtn.style.color = 'white';
-        startBtn.style.borderRadius = '18px';
-        startBtn.style.opacity = '0.5';
-        startBtn.style.cursor = 'not-allowed';
-        startBtn.disabled = true;
-        startBtn.textContent = `Start with Selected Photos`;
-        
+        // Add start button event handlers
         const handleStartClick = () => {
             if (startClickHandled || startBtn.disabled) return;
             startClickHandled = true;
