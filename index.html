@@ -50,12 +50,13 @@
     body {
         font-family: 'Fredoka', sans-serif;
         background: linear-gradient(135deg, #1e3a5f 0%, #2a5298 50%, #3d7bc7 100%);
-        min-height: 100vh;
+        background-attachment: fixed;
+        height: 100vh;
+        max-height: 100vh;
         width: 100vw;
         margin: 0;
         padding: 0;
-        overflow-x: hidden;
-        overflow-y: auto;
+        overflow: hidden; /* Prevent body scroll */
         position: relative;
     }
     
@@ -88,14 +89,15 @@
     .container {
         width: 100%;
         max-width: 1200px;
-        min-height: 100vh; /* Fill entire viewport height */
-        min-height: calc(100vh + env(safe-area-inset-bottom, 0px)); /* Include safe area */
-        padding: 20px 20px 200px 20px; /* Large bottom padding for button area */
+        height: 100vh; /* Fit exactly to viewport */
+        max-height: 100vh;
+        padding: 80px 20px 30px 20px; /* Top padding for settings icon, small bottom */
         margin: 0 auto;
         position: relative;
         z-index: 2;
         display: flex;
         flex-direction: column;
+        overflow-y: auto; /* Allow scroll only in container if needed */
     }
     
     .header {
@@ -151,6 +153,7 @@
         gap: 2vw;  /* Responsive gap - 2% of viewport width */
         flex-wrap: wrap;
         max-width: 100%;
+        max-height: 70vh; /* Limit height to fit viewport */
         margin: 0 auto;
         padding: 20px;
         min-height: 320px;
@@ -299,7 +302,7 @@
     @media (max-width: 768px) {
         
         .container {
-            padding: 10px 15px 220px 15px; /* Massive bottom padding for buttons on mobile */
+            padding: 80px 15px 30px 15px; /* Top for settings icon, small bottom */
         }
         
         .header {
@@ -308,7 +311,7 @@
         
         .cards-container {
             gap: 15px;
-            padding-bottom: 100px; /* Push cards up away from buttons */
+            padding: 10px; /* Smaller padding on mobile */
         }
         
         .card {
@@ -566,11 +569,45 @@
         transform: translateX(-50%);
         display: flex;
         gap: 15px;
-        z-index: 1000; /* Higher z-index to stay above everything */
+        z-index: 1000;
         padding: 15px 20px;
-        background: rgba(30, 58, 95, 0.9); /* Navy backdrop */
+        background: rgba(30, 58, 95, 0.9);
         border-radius: 60px;
         backdrop-filter: blur(10px);
+        /* Hidden by default - only used if uncommented in HTML */
+        display: none;
+    }
+    
+    /* Top-right settings icon - matches theme */
+    .settings-icon {
+        position: fixed;
+        top: 20px;
+        top: calc(20px + env(safe-area-inset-top, 0px));
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        font-size: 22px;
+        cursor: pointer;
+        z-index: 1000;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    
+    .settings-icon:hover {
+        transform: scale(1.1) rotate(90deg);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+    }
+    
+    .settings-icon:active {
+        transform: scale(0.95) rotate(90deg);
     }
     
     .btn {
@@ -836,10 +873,15 @@
     </div>
 </div>
 
+<!-- Top right settings icon -->
+<button class="settings-icon" onclick="showSettings()">⚙️</button>
+
+<!-- Removed bottom controls bar - can restore if needed:
 <div class="controls">
     <button class="btn btn-primary" onclick="resetGame()">📁 Back to Folders</button>
     <button class="btn btn-secondary" onclick="showSettings()">⚙️ Settings</button>
 </div>
+-->
 
 <div class="modal" id="settingsModal">
     <div class="modal-content" style="max-height: 85vh; overflow-y: auto;">
@@ -853,15 +895,6 @@
                 <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Number of Cards:</label>
                 <input type="number" id="numCardsInput" min="2" max="8" value="3" 
                        style="width: 100%; padding: 12px; border: 2px solid #667eea; border-radius: 10px; font-size: 16px; font-family: 'Fredoka', sans-serif;">
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Card Layout:</label>
-                <select id="layoutSelect" 
-                        style="width: 100%; padding: 12px; border: 2px solid #667eea; border-radius: 10px; font-size: 16px; font-family: 'Fredoka', sans-serif;">
-                    <option value="horizontal">Horizontal (side by side)</option>
-                    <option value="vertical">Vertical (top to bottom)</option>
-                </select>
             </div>
             
             <div style="margin-bottom: 20px;">
@@ -887,21 +920,6 @@
                     ➕ New Program
                 </button>
             </div>
-            
-            <!-- Debug button -->
-            <button class="program-btn" onclick="debugFirebase()" style="width: 100%; margin-top: 10px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);">
-                🔍 Debug: Check Firebase Data
-            </button>
-            
-            <!-- Force reload button -->
-            <button class="program-btn" onclick="forceReloadFromFirebase()" style="width: 100%; margin-top: 10px; background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-                🔄 Force Reload from Firebase
-            </button>
-            
-            <!-- Emergency folder creation -->
-            <button class="program-btn" onclick="emergencyFixFolders()" style="width: 100%; margin-top: 10px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                🚨 FIX: Add Folders to Firebase
-            </button>
         </div>
         
         <div style="border-top: 2px solid #eee; padding-top: 30px; margin-top: 30px;">
@@ -1286,7 +1304,7 @@
     // Settings
     let settings = {
         numCards: 3,
-        cardLayout: 'horizontal', // 'horizontal' or 'vertical'
+        // cardLayout removed - now handled automatically by orientation
         maxTrials: 5 // Default to 5 trials
     };
     
@@ -2151,7 +2169,7 @@
         
         // Update settings UI
         document.getElementById('numCardsInput').value = settings.numCards;
-        document.getElementById('layoutSelect').value = settings.cardLayout;
+        // layoutSelect removed - orientation is automatic
         document.getElementById('maxTrialsInput').value = settings.maxTrials === -1 ? '' : settings.maxTrials;
         
         // Update custom programs list
@@ -2164,7 +2182,7 @@
     
     function saveSettings() {
         settings.numCards = parseInt(document.getElementById('numCardsInput').value) || 3;
-        settings.cardLayout = document.getElementById('layoutSelect').value;
+        // cardLayout removed - orientation is automatic
         const roundsValue = document.getElementById('maxTrialsInput').value;
         settings.maxTrials = roundsValue === '' ? 5 : parseInt(roundsValue);
         
@@ -2912,10 +2930,15 @@
             }
             folders[trimmedName] = [];
             console.log('📁 Creating folder:', trimmedName);
-            saveProgramsToStorage();
-            updateFoldersAndCategoriesList();
-            showFolderSelectionScreen(); // Update main screen too
-            console.log('✅ Folder created and saved');
+            console.log('📊 All folders now:', folders);
+            console.log('📊 All categories:', customCategories);
+            
+            saveProgramsToStorage().then(() => {
+                console.log('💾 Save complete, updating UI...');
+                updateFoldersAndCategoriesList();
+                showFolderSelectionScreen();
+                console.log('✅ Folder created and UI updated');
+            });
         }
     }
     
