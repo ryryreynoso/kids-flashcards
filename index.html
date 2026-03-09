@@ -1698,11 +1698,19 @@
     }
     
     function showSetupScreen() {
+        console.log('===== showSetupScreen CALLED =====');
         console.log('showSetupScreen called, currentTrial:', currentTrial);
+        console.log('gameMode will be set to: setup');
+        console.log('currentCards:', currentCards);
+        console.log('currentCards.length:', currentCards ? currentCards.length : 'undefined');
+        
         gameMode = 'setup';
         const container = document.getElementById('cardsContainer');
         const prompt = document.getElementById('promptText');
         const trialIndicator = document.getElementById('trialIndicator');
+        
+        console.log('Container element:', container);
+        console.log('Container exists:', !!container);
         
         // Only show setup at the very beginning (round 0)
         if (currentTrial === 0) {
