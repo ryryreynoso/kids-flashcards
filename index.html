@@ -1828,13 +1828,12 @@
         // Detect orientation and FORCE layout with inline styles
         const isLandscape = window.innerWidth > window.innerHeight;
         
-        // Clear any existing styles first
-        container.removeAttribute('style');
+        // Set layout styles (don't remove all - keep container visible)
+        container.style.display = 'flex';
         
         if (isLandscape) {
             // LANDSCAPE = HORIZONTAL (side by side)
             container.className = 'cards-container horizontal';
-            container.style.display = 'flex';
             container.style.flexDirection = 'row';
             container.style.justifyContent = 'center';
             container.style.alignItems = 'center';
@@ -1844,7 +1843,6 @@
         } else {
             // PORTRAIT = VERTICAL (stacked)
             container.className = 'cards-container vertical';
-            container.style.display = 'flex';
             container.style.flexDirection = 'column';
             container.style.justifyContent = 'center';
             container.style.alignItems = 'center';
@@ -1852,6 +1850,10 @@
             container.style.gap = '2vw';
             container.style.padding = '20px';
         }
+        
+        // Ensure container is visible
+        container.style.visibility = 'visible';
+        container.style.opacity = '1';
         
         // Show round indicator if limited rounds
         if (settings.maxTrials > 0) {
