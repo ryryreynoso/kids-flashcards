@@ -1717,32 +1717,19 @@
             container.innerHTML = '';
             controls.style.display = 'flex'; // Show controls with settings button
             
-            // Detect orientation and FORCE layout with inline styles
+            // Detect orientation and set layout
             const isLandscape = window.innerWidth > window.innerHeight;
             
-            // Clear any existing styles first
-            container.removeAttribute('style');
+            container.style.display = 'flex';
             
             if (isLandscape) {
                 // LANDSCAPE = HORIZONTAL (side by side)
                 container.className = 'cards-container horizontal';
-                container.style.display = 'flex';
                 container.style.flexDirection = 'row';
-                container.style.justifyContent = 'center';
-                container.style.alignItems = 'center';
-                container.style.flexWrap = 'wrap';
-                container.style.gap = '2vw';
-                container.style.padding = '20px';
             } else {
                 // PORTRAIT = VERTICAL (stacked)
                 container.className = 'cards-container vertical';
-                container.style.display = 'flex';
                 container.style.flexDirection = 'column';
-                container.style.justifyContent = 'center';
-                container.style.alignItems = 'center';
-                container.style.flexWrap = 'wrap';
-                container.style.gap = '2vw';
-                container.style.padding = '20px';
             }
             
             console.log('🎨 Screen:', window.innerWidth + 'x' + window.innerHeight);
