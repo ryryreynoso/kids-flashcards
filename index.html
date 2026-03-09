@@ -1347,10 +1347,16 @@
         
         container.innerHTML = '';
         container.style.display = 'flex';
-        container.style.flexWrap = 'wrap';
+        container.style.flexDirection = 'column'; // Stack vertically
+        container.style.flexWrap = 'nowrap';
         container.style.gap = '15px';
-        container.style.justifyContent = 'center';
+        container.style.justifyContent = 'flex-start'; // Start from top
+        container.style.alignItems = 'center';
         container.style.padding = '20px';
+        container.style.overflowY = 'auto'; // Allow scroll
+        container.style.maxHeight = '80vh'; // Limit height but allow scroll
+        container.style.visibility = 'visible';
+        container.style.opacity = '1';
         
         const allPhotos = customCategories[categoryName];
         let selectedPhotos = [];
