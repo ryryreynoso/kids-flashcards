@@ -687,11 +687,13 @@
     .results-screen {
         display: none;
         text-align: center;
-        padding: 40px;
+        padding: 40px 20px;
         background: white;
         border-radius: 30px;
         max-width: 600px;
-        margin: 0 auto;
+        max-height: 85vh; /* Limit height to fit on screen */
+        overflow-y: auto; /* Allow scrolling if content is tall */
+        margin: 20px auto;
         box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     }
     
@@ -1392,6 +1394,11 @@
         const container = document.getElementById('cardsContainer');
         const promptText = document.getElementById('promptText');
         const trialIndicator = document.getElementById('trialIndicator');
+        const resultsScreen = document.getElementById('resultsScreen');
+        
+        // Hide results screen if showing
+        resultsScreen.classList.remove('show');
+        resultsScreen.style.display = 'none';
         
         trialIndicator.style.display = 'none'; // Hide trial indicator
         promptText.textContent = `Select ${settings.numCards} Photos to Use`;
@@ -1626,6 +1633,11 @@
         const container = document.getElementById('cardsContainer');
         const promptText = document.getElementById('promptText');
         const trialIndicator = document.getElementById('trialIndicator');
+        const resultsScreen = document.getElementById('resultsScreen');
+        
+        // Hide results screen if showing
+        resultsScreen.classList.remove('show');
+        resultsScreen.style.display = 'none';
         
         gameMode = 'folder-select';
         trialIndicator.style.display = 'none';
@@ -1717,6 +1729,11 @@
     function showFolderPrograms(folderName) {
         const container = document.getElementById('cardsContainer');
         const promptText = document.getElementById('promptText');
+        const resultsScreen = document.getElementById('resultsScreen');
+        
+        // Hide results screen if showing
+        resultsScreen.classList.remove('show');
+        resultsScreen.style.display = 'none';
         
         // Track current folder
         currentFolder = folderName;
