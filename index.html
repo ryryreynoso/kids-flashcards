@@ -920,6 +920,11 @@
 <!-- Top right settings icon -->
 <button class="settings-icon" onclick="showSettings()">⚙️</button>
 
+<!-- Version number - bottom right -->
+<div style="position: fixed; bottom: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); right: 20px; font-size: 11px; color: rgba(255,255,255,0.6); z-index: 999; font-family: 'Fredoka', sans-serif; font-weight: 600;">
+    v2.1
+</div>
+
 <!-- Removed bottom controls bar - can restore if needed:
 <div class="controls">
     <button class="btn btn-primary" onclick="resetGame()">📁 Back to Folders</button>
@@ -2121,13 +2126,13 @@
             showSuccessOverCard(cardEl);
             createConfetti(cardEl); // Pass the card element for explosion effect
             
-            // Increment round counter
+            // Increment round counter BEFORE checking
             currentTrial++;
             console.log('✅ Correct! currentTrial is now:', currentTrial);
             console.log('📊 maxTrials:', settings.maxTrials);
-            console.log('🔍 Check:', currentTrial, '>', settings.maxTrials, '=', currentTrial > settings.maxTrials);
+            console.log('🔍 Check if done:', currentTrial, '>', settings.maxTrials, '=', currentTrial > settings.maxTrials);
             
-            // Trial complete - check if game is over
+            // Trial complete - check if game is over (after completing maxTrials)
             if (settings.maxTrials > 0 && currentTrial > settings.maxTrials) {
                 console.log('🎉 GAME OVER - Showing results!');
                 setTimeout(() => {
@@ -2135,12 +2140,9 @@
                 }, 2000);
             } else {
                 console.log('➡️ Continue to next trial...');
-                // Continue to next round - pick NEW correct answer
+                // Continue to next round - SAME correct answer, just shuffle positions
                 setTimeout(() => {
                     trialMistakes = 0;
-                    // Randomly pick a new correct answer from the current cards
-                    correctAnswer = currentCards[Math.floor(Math.random() * currentCards.length)];
-                    console.log('New correct answer for next round:', correctAnswer.label);
                     renderPlayingCards();
                 }, 1500);
             }
