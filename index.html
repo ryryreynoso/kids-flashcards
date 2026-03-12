@@ -1126,6 +1126,7 @@
     let currentProgram = 'animals';
     let currentCards = [];
     let lastCardOrder = []; // Track last order to ensure shuffle changes it
+    let lastCorrectPosition = -1; // Track where correct answer was last time
     let correctAnswer = null;
     let uploadedCards = [];
     
@@ -2010,18 +2011,35 @@
             prompt.textContent = `Touch ${correctAnswer.label}!`;
         }
         
-        // Shuffle the cards order - GUARANTEE different order than last time
+        // Shuffle the cards order - GUARANTEE different order AND correct answer in different position
         console.log('Cards BEFORE shuffle:', currentCards.map(c => c.label));
+        console.log('Correct answer:', correctAnswer.label);
+        console.log('Last correct position:', lastCorrectPosition);
+        
         let shuffledCards = shuffle([...currentCards]);
         
-        // Keep shuffling until we get a different order
+        // Keep shuffling until we get a different order AND correct answer in different position
         let attempts = 0;
-        while (attempts < 100 && lastCardOrder.length > 0) {
+        while (attempts < 100) {
             const currentOrder = shuffledCards.map(c => c.label).join(',');
             const lastOrder = lastCardOrder.join(',');
+            const correctPosition = shuffledCards.findIndex(c => c.label === correctAnswer.label);
             
-            if (currentOrder === lastOrder) {
+            let needsReshuffle = false;
+            
+            // Check 1: Different order than last time
+            if (lastCardOrder.length > 0 && currentOrder === lastOrder) {
                 console.log('Same order detected, shuffling again...');
+                needsReshuffle = true;
+            }
+            
+            // Check 2: Correct answer in different position than last time
+            if (lastCorrectPosition >= 0 && correctPosition === lastCorrectPosition) {
+                console.log(`Correct answer in same position (${correctPosition}), shuffling again...`);
+                needsReshuffle = true;
+            }
+            
+            if (needsReshuffle) {
                 shuffledCards = shuffle([...currentCards]);
                 attempts++;
             } else {
@@ -2029,9 +2047,11 @@
             }
         }
         
-        // Save this order for next time
+        // Save this order and correct position for next time
         lastCardOrder = shuffledCards.map(c => c.label);
+        lastCorrectPosition = shuffledCards.findIndex(c => c.label === correctAnswer.label);
         console.log('Cards AFTER shuffle:', shuffledCards.map(c => c.label));
+        console.log('Correct answer now at position:', lastCorrectPosition);
         
         shuffledCards.forEach((card, index) => {
             if (card.image) {
@@ -2103,13 +2123,18 @@
             
             // Increment round counter
             currentTrial++;
+            console.log('✅ Correct! currentTrial is now:', currentTrial);
+            console.log('📊 maxTrials:', settings.maxTrials);
+            console.log('🔍 Check:', currentTrial, '>', settings.maxTrials, '=', currentTrial > settings.maxTrials);
             
             // Trial complete - check if game is over
             if (settings.maxTrials > 0 && currentTrial > settings.maxTrials) {
+                console.log('🎉 GAME OVER - Showing results!');
                 setTimeout(() => {
                     showResults();
                 }, 2000);
             } else {
+                console.log('➡️ Continue to next trial...');
                 // Continue to next round - pick NEW correct answer
                 setTimeout(() => {
                     trialMistakes = 0;
