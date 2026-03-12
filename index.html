@@ -1125,6 +1125,7 @@
     // Game state
     let currentProgram = 'animals';
     let currentCards = [];
+    let lastCardOrder = []; // Track last order to ensure shuffle changes it
     let correctAnswer = null;
     let uploadedCards = [];
     
@@ -2009,9 +2010,27 @@
             prompt.textContent = `Touch ${correctAnswer.label}!`;
         }
         
-        // Shuffle the cards order - create truly random order each time
+        // Shuffle the cards order - GUARANTEE different order than last time
         console.log('Cards BEFORE shuffle:', currentCards.map(c => c.label));
-        const shuffledCards = shuffle([...currentCards]);
+        let shuffledCards = shuffle([...currentCards]);
+        
+        // Keep shuffling until we get a different order
+        let attempts = 0;
+        while (attempts < 100 && lastCardOrder.length > 0) {
+            const currentOrder = shuffledCards.map(c => c.label).join(',');
+            const lastOrder = lastCardOrder.join(',');
+            
+            if (currentOrder === lastOrder) {
+                console.log('Same order detected, shuffling again...');
+                shuffledCards = shuffle([...currentCards]);
+                attempts++;
+            } else {
+                break;
+            }
+        }
+        
+        // Save this order for next time
+        lastCardOrder = shuffledCards.map(c => c.label);
         console.log('Cards AFTER shuffle:', shuffledCards.map(c => c.label));
         
         shuffledCards.forEach((card, index) => {
@@ -2151,7 +2170,7 @@
     }
     
     function showWrongMessageOverCard(cardEl) {
-        const wrongMessages = ['Try Again! 💪', 'Oops! 🤔', 'Not Quite! 💭', 'Keep Trying! 🌟'];
+        const wrongMessages = ['❌'];
         
         const message = document.createElement('div');
         message.className = 'wrong-message show';
@@ -2241,7 +2260,7 @@
         // Always celebrate completing the rounds!
         let statsHTML = `
             <div style="margin-bottom: 25px; font-size: clamp(28px, 5vw, 42px);">
-                <span class="stat-highlight stat-perfect">🎊 ${settings.maxTrials} Trials Complete! 🎊</span>
+                <span class="stat-highlight stat-perfect">🎊 All Done! 🎊</span>
             </div>
         `;
         
