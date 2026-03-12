@@ -151,7 +151,6 @@
         gap: 2vw;  /* Responsive gap - 2% of viewport width */
         flex-wrap: wrap;
         max-width: 100%;
-        max-height: calc(100vh - 200px); /* Limit height, leave room for header */
         overflow-y: auto; /* Allow scrolling to see all cards */
         margin: 0 auto;
         padding: 20px;
@@ -922,7 +921,7 @@
 
 <!-- Version number - bottom right -->
 <div style="position: fixed; bottom: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); right: 20px; font-size: 11px; color: rgba(255,255,255,0.6); z-index: 999; font-family: 'Fredoka', sans-serif; font-weight: 600;">
-    v2.1
+    v2.2
 </div>
 
 <!-- Removed bottom controls bar - can restore if needed:
@@ -2092,6 +2091,11 @@
                 container.appendChild(cardEl);
             }
         });
+        
+        // Force layout update after cards are added
+        setTimeout(() => {
+            updateLayoutForOrientation();
+        }, 50);
         
         // Additional cleanup with delay to catch any lingering hover states
         setTimeout(() => {
@@ -3334,31 +3338,24 @@
         const isLandscape = window.innerWidth > window.innerHeight;
         console.log(`📱 Orientation changed: ${isLandscape ? 'LANDSCAPE' : 'PORTRAIT'} (${window.innerWidth}x${window.innerHeight})`);
         
-        // Clear and rebuild inline styles
-        container.removeAttribute('style');
+        // Don't remove styles - just update what we need
+        container.style.display = 'flex';
+        container.style.justifyContent = 'center';
+        container.style.alignItems = 'center';
+        container.style.flexWrap = 'wrap';
+        container.style.gap = '2vw';
+        container.style.padding = '20px';
         
         if (isLandscape) {
             // LANDSCAPE = HORIZONTAL (side by side)
             console.log('➡️ Setting HORIZONTAL layout (row)');
             container.className = 'cards-container horizontal';
-            container.style.display = 'flex';
             container.style.flexDirection = 'row';
-            container.style.justifyContent = 'center';
-            container.style.alignItems = 'center';
-            container.style.flexWrap = 'wrap';
-            container.style.gap = '2vw';
-            container.style.padding = '20px';
         } else {
             // PORTRAIT = VERTICAL (stacked)
             console.log('⬇️ Setting VERTICAL layout (column)');
             container.className = 'cards-container vertical';
-            container.style.display = 'flex';
             container.style.flexDirection = 'column';
-            container.style.justifyContent = 'center';
-            container.style.alignItems = 'center';
-            container.style.flexWrap = 'wrap';
-            container.style.gap = '2vw';
-            container.style.padding = '20px';
         }
     }
     
