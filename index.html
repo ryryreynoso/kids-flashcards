@@ -2110,9 +2110,12 @@
                     showResults();
                 }, 2000);
             } else {
-                // Continue to next round with same cards and same correct answer
+                // Continue to next round - pick NEW correct answer
                 setTimeout(() => {
                     trialMistakes = 0;
+                    // Randomly pick a new correct answer from the current cards
+                    correctAnswer = currentCards[Math.floor(Math.random() * currentCards.length)];
+                    console.log('New correct answer for next round:', correctAnswer.label);
                     renderPlayingCards();
                 }, 1500);
             }
