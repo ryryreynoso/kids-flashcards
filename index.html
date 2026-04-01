@@ -212,7 +212,9 @@
             min-height: 100px;
         }
         
-        .cards-container {
+        .cards-container,
+        .cards-container.horizontal,
+        .cards-container.vertical {
             flex-direction: row !important;
             gap: 1.5vw;
         }
@@ -443,6 +445,19 @@
         .card-emoji {
             font-size: clamp(50px, 7vw, 80px);
             margin-bottom: 10px;
+        }
+    }
+    
+    /* ULTIMATE CATCH-ALL: Force landscape to ALWAYS be horizontal */
+    @media (orientation: landscape) {
+        #cardsContainer,
+        #cardsContainer.cards-container,
+        #cardsContainer.horizontal,
+        #cardsContainer.vertical,
+        .cards-container,
+        .cards-container.horizontal,
+        .cards-container.vertical {
+            flex-direction: row !important;
         }
     }
     
@@ -935,7 +950,7 @@
 
 <!-- Version number - bottom right -->
 <div style="position: fixed; bottom: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); right: 20px; font-size: 11px; color: rgba(255,255,255,0.6); z-index: 999; font-family: 'Fredoka', sans-serif; font-weight: 600;">
-    v2.6
+    v2.7
 </div>
 
 <!-- Removed bottom controls bar - can restore if needed:
@@ -2123,7 +2138,14 @@
         // Force layout update after cards are added
         setTimeout(() => {
             updateLayoutForOrientation();
-        }, 50);
+            
+            // Log computed styles to debug iPad landscape
+            const computedStyle = window.getComputedStyle(container);
+            console.log('💻 COMPUTED flex-direction:', computedStyle.flexDirection);
+            console.log('💻 COMPUTED display:', computedStyle.display);
+            console.log('💻 Screen size:', window.innerWidth, 'x', window.innerHeight);
+            console.log('💻 Orientation:', window.innerWidth > window.innerHeight ? 'LANDSCAPE' : 'PORTRAIT');
+        }, 100);
         
         // Additional cleanup with delay to catch any lingering hover states
         setTimeout(() => {
