@@ -165,11 +165,11 @@
     }
     
     .cards-container.vertical {
-        flex-direction: column !important;
+        /* JavaScript sets flex-direction dynamically */
     }
     
     .cards-container.horizontal {
-        flex-direction: row !important;
+        /* JavaScript sets flex-direction dynamically */
     }
     
     .card {
@@ -229,10 +229,8 @@
             max-height: 300px;
         }
         
-        .cards-container,
-        .cards-container.horizontal,
-        .cards-container.vertical {
-            flex-direction: column !important;
+        /* Don't force flex-direction here - JavaScript handles it */
+        .cards-container {
             gap: 2vh;
         }
     }
@@ -950,7 +948,7 @@
 
 <!-- Version number - bottom right -->
 <div style="position: fixed; bottom: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); right: 20px; font-size: 11px; color: rgba(255,255,255,0.6); z-index: 999; font-family: 'Fredoka', sans-serif; font-weight: 600;">
-    v2.7
+    v2.8
 </div>
 
 <!-- Removed bottom controls bar - can restore if needed:
@@ -1898,15 +1896,23 @@
             const isLandscape = window.innerWidth > window.innerHeight;
             
             container.style.display = 'flex';
+            container.style.justifyContent = 'center';
+            container.style.alignItems = 'center';
+            container.style.flexWrap = 'wrap';
+            container.style.gap = '2vw';
             
             if (isLandscape) {
-                // LANDSCAPE = HORIZONTAL (side by side)
+                // LANDSCAPE = HORIZONTAL (side by side) - FORCE IT
                 container.className = 'cards-container horizontal';
-                // Don't set flexDirection inline - let CSS media queries handle it
+                container.style.flexDirection = 'row';
+                container.style.setProperty('flex-direction', 'row', 'important');
+                console.log('🔴 SETUP: FORCING LANDSCAPE HORIZONTAL');
             } else {
                 // PORTRAIT = VERTICAL (stacked)
                 container.className = 'cards-container vertical';
-                // Don't set flexDirection inline - let CSS media queries handle it
+                container.style.flexDirection = 'column';
+                container.style.setProperty('flex-direction', 'column', 'important');
+                console.log('🔴 SETUP: FORCING PORTRAIT VERTICAL');
             }
             
             console.log('🎨 Screen:', window.innerWidth + 'x' + window.innerHeight);
@@ -2026,19 +2032,27 @@
         
         container.innerHTML = '';
         
-        // Detect orientation and set class only - CSS will handle the layout
+        // Detect orientation and FORCE layout with JavaScript
         const isLandscape = window.innerWidth > window.innerHeight;
         
         container.style.display = 'flex';
+        container.style.justifyContent = 'center';
+        container.style.alignItems = 'center';
+        container.style.flexWrap = 'wrap';
+        container.style.gap = '2vw';
         
         if (isLandscape) {
-            // LANDSCAPE = HORIZONTAL (side by side)
+            // LANDSCAPE = HORIZONTAL (side by side) - FORCE IT
             container.className = 'cards-container horizontal';
-            // Don't set flexDirection inline - let CSS media queries handle it
+            container.style.flexDirection = 'row';
+            container.style.setProperty('flex-direction', 'row', 'important');
+            console.log('🔴 FORCING LANDSCAPE HORIZONTAL LAYOUT');
         } else {
             // PORTRAIT = VERTICAL (stacked)
             container.className = 'cards-container vertical';
-            // Don't set flexDirection inline - let CSS media queries handle it
+            container.style.flexDirection = 'column';
+            container.style.setProperty('flex-direction', 'column', 'important');
+            console.log('🔴 FORCING PORTRAIT VERTICAL LAYOUT');
         }
         
         // Show round indicator if limited rounds
@@ -3389,7 +3403,7 @@
         const isLandscape = window.innerWidth > window.innerHeight;
         console.log(`📱 Orientation changed: ${isLandscape ? 'LANDSCAPE' : 'PORTRAIT'} (${window.innerWidth}x${window.innerHeight})`);
         
-        // Don't remove styles - just update what we need
+        // Force layout with JavaScript - CSS isn't working reliably on iPad
         container.style.display = 'flex';
         container.style.justifyContent = 'center';
         container.style.alignItems = 'center';
@@ -3398,15 +3412,17 @@
         container.style.padding = '20px';
         
         if (isLandscape) {
-            // LANDSCAPE = HORIZONTAL (side by side)
+            // LANDSCAPE = HORIZONTAL (side by side) - FORCE IT
             console.log('➡️ Setting HORIZONTAL layout (row)');
             container.className = 'cards-container horizontal';
-            // Don't set flexDirection inline - let CSS media queries handle it
+            container.style.flexDirection = 'row';
+            container.style.setProperty('flex-direction', 'row', 'important');
         } else {
             // PORTRAIT = VERTICAL (stacked)
             console.log('⬇️ Setting VERTICAL layout (column)');
             container.className = 'cards-container vertical';
-            // Don't set flexDirection inline - let CSS media queries handle it
+            container.style.flexDirection = 'column';
+            container.style.setProperty('flex-direction', 'column', 'important');
         }
     }
     
