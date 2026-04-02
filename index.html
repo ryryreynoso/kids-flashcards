@@ -913,7 +913,7 @@
     
     <!-- Version number - bottom right -->
     <div style="position: fixed; bottom: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); right: 20px; font-size: 11px; color: rgba(255,255,255,0.6); z-index: 999; font-family: 'Fredoka', sans-serif; font-weight: 600;">
-        v3.4
+        v3.5
     </div>
     
     <!-- Removed bottom controls bar - can restore if needed:
@@ -1902,7 +1902,7 @@
                 container.style.display = 'flex';
                 container.style.justifyContent = 'center';
                 container.style.alignItems = 'center';
-                container.style.flexWrap = 'wrap';
+                container.style.flexWrap = settings.cardLayout === 'horizontal' ? 'nowrap' : 'wrap';
                 container.style.gap = '2vw';
                 container.style.maxWidth = ''; // Clear any max-width restriction
                 container.style.margin = '0 auto';
@@ -1915,7 +1915,8 @@
                 const newStyle = currentStyle.split(';')
                     .filter(s => !s.includes('flex-direction') && !s.includes('max-width'))
                     .join(';');
-                container.setAttribute('style', newStyle + `; flex-direction: ${layoutDirection} !important; max-width: none;`);
+                const wrapValue = settings.cardLayout === 'horizontal' ? 'nowrap' : 'wrap';
+                container.setAttribute('style', newStyle + `; flex-direction: ${layoutDirection} !important; max-width: none; flex-wrap: ${wrapValue} !important;`);
                 
                 console.log('🟢🟢🟢 SETUP SCREEN - APPLYING LAYOUT 🟢🟢🟢');
                 console.log('🟢 Layout direction:', layoutDirection);
@@ -2052,7 +2053,7 @@
             container.style.display = 'flex';
             container.style.justifyContent = 'center';
             container.style.alignItems = 'center';
-            container.style.flexWrap = 'wrap';
+            container.style.flexWrap = settings.cardLayout === 'horizontal' ? 'nowrap' : 'wrap';
             container.style.gap = '2vw';
             container.style.maxWidth = ''; // Clear any max-width restriction
             container.style.margin = '0 auto';
@@ -2065,7 +2066,8 @@
             const newStyle = currentStyle.split(';')
                 .filter(s => !s.includes('flex-direction') && !s.includes('max-width'))
                 .join(';');
-            container.setAttribute('style', newStyle + `; flex-direction: ${layoutDirection} !important; max-width: none;`);
+            const wrapValue = settings.cardLayout === 'horizontal' ? 'nowrap' : 'wrap';
+            container.setAttribute('style', newStyle + `; flex-direction: ${layoutDirection} !important; max-width: none; flex-wrap: ${wrapValue} !important;`);
             
             console.log('🔴🔴🔴 RENDER PLAYING - APPLYING LAYOUT 🔴🔴🔴');
             console.log('🔴 Layout direction:', layoutDirection);
@@ -2498,6 +2500,7 @@
                 if (container) {
                     const layoutDirection = getLayoutDirection();
                     container.style.flexDirection = layoutDirection;
+                    container.style.flexWrap = settings.cardLayout === 'horizontal' ? 'nowrap' : 'wrap';
                     container.style.setProperty('flex-direction', layoutDirection, 'important');
                     container.className = layoutDirection === 'row' ? 'cards-container horizontal' : 'cards-container vertical';
                     // Also set via setAttribute - remove max-width too
@@ -2505,7 +2508,8 @@
                     const newStyle = currentStyle.split(';')
                         .filter(s => !s.includes('flex-direction') && !s.includes('max-width'))
                         .join(';');
-                    container.setAttribute('style', newStyle + `; flex-direction: ${layoutDirection} !important; max-width: none;`);
+                    const wrapValue = settings.cardLayout === 'horizontal' ? 'nowrap' : 'wrap';
+                    container.setAttribute('style', newStyle + `; flex-direction: ${layoutDirection} !important; max-width: none; flex-wrap: ${wrapValue} !important;`);
                     console.log('🔄 Applied layout:', layoutDirection, 'to container');
                     console.log('🔄 Style attribute:', container.getAttribute('style'));
                 }
@@ -3462,7 +3466,7 @@
             container.style.display = 'flex';
             container.style.justifyContent = 'center';
             container.style.alignItems = 'center';
-            container.style.flexWrap = 'wrap';
+            container.style.flexWrap = settings.cardLayout === 'horizontal' ? 'nowrap' : 'wrap';
             container.style.gap = '2vw';
             container.style.padding = '20px';
             
@@ -3474,7 +3478,8 @@
             const newStyle = currentStyle.split(';')
                 .filter(s => !s.includes('flex-direction') && !s.includes('max-width'))
                 .join(';');
-            container.setAttribute('style', newStyle + `; flex-direction: ${layoutDirection} !important; max-width: none; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 2vw; padding: 20px;`);
+            const wrapValue = settings.cardLayout === 'horizontal' ? 'nowrap' : 'wrap';
+            container.setAttribute('style', newStyle + `; flex-direction: ${layoutDirection} !important; max-width: none; flex-wrap: ${wrapValue} !important; display: flex; justify-content: center; align-items: center; gap: 2vw; padding: 20px;`);
             
             console.log('✅ Layout updated to:', layoutDirection);
             console.log('✅ container.getAttribute("style"):', container.getAttribute('style'));
