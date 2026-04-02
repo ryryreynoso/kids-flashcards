@@ -948,7 +948,7 @@
 
 <!-- Version number - bottom right -->
 <div style="position: fixed; bottom: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); right: 20px; font-size: 11px; color: rgba(255,255,255,0.6); z-index: 999; font-family: 'Fredoka', sans-serif; font-weight: 600;">
-    v2.8
+    v2.9
 </div>
 
 <!-- Removed bottom controls bar - can restore if needed:
@@ -970,6 +970,16 @@
                 <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Number of Cards:</label>
                 <input type="number" id="numCardsInput" min="2" max="8" value="3" 
                        style="width: 100%; padding: 12px; border: 2px solid #667eea; border-radius: 10px; font-size: 16px; font-family: 'Fredoka', sans-serif;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #333;">Card Layout:</label>
+                <select id="layoutSelect" style="width: 100%; padding: 12px; border: 2px solid #667eea; border-radius: 10px; font-size: 16px; font-family: 'Fredoka', sans-serif; background: white;">
+                    <option value="auto">Auto (Based on Orientation)</option>
+                    <option value="horizontal">Always Horizontal</option>
+                    <option value="vertical">Always Vertical</option>
+                </select>
+                <p style="font-size: 12px; color: #999; margin-top: 5px;">Choose how cards are arranged on screen</p>
             </div>
             
             <div style="margin-bottom: 20px;">
@@ -1381,9 +1391,27 @@
     // Settings
     let settings = {
         numCards: 3,
-        // cardLayout removed - now handled automatically by orientation
+        cardLayout: 'auto', // 'auto', 'horizontal', or 'vertical'
         maxTrials: 5 // Default to 5 trials
     };
+    
+    // Determine layout based on settings and orientation
+    function getLayoutDirection() {
+        console.log('📐 getLayoutDirection called, cardLayout:', settings.cardLayout);
+        
+        if (settings.cardLayout === 'horizontal') {
+            console.log('📐 Force HORIZONTAL (row) from settings');
+            return 'row';
+        } else if (settings.cardLayout === 'vertical') {
+            console.log('📐 Force VERTICAL (column) from settings');
+            return 'column';
+        } else {
+            // Auto: based on orientation
+            const isLandscape = window.innerWidth > window.innerHeight;
+            console.log('📐 AUTO mode, orientation:', isLandscape ? 'LANDSCAPE' : 'PORTRAIT');
+            return isLandscape ? 'row' : 'column';
+        }
+    }
     
     const successMessages = [
         'Great Job! 🎉',
@@ -1892,8 +1920,8 @@
             container.innerHTML = '';
             // controls removed - now using settings icon
             
-            // Detect orientation and set layout
-            const isLandscape = window.innerWidth > window.innerHeight;
+            // Get layout direction from settings
+            const layoutDirection = getLayoutDirection();
             
             container.style.display = 'flex';
             container.style.justifyContent = 'center';
@@ -1901,22 +1929,12 @@
             container.style.flexWrap = 'wrap';
             container.style.gap = '2vw';
             
-            if (isLandscape) {
-                // LANDSCAPE = HORIZONTAL (side by side) - FORCE IT
-                container.className = 'cards-container horizontal';
-                container.style.flexDirection = 'row';
-                container.style.setProperty('flex-direction', 'row', 'important');
-                console.log('🔴 SETUP: FORCING LANDSCAPE HORIZONTAL');
-            } else {
-                // PORTRAIT = VERTICAL (stacked)
-                container.className = 'cards-container vertical';
-                container.style.flexDirection = 'column';
-                container.style.setProperty('flex-direction', 'column', 'important');
-                console.log('🔴 SETUP: FORCING PORTRAIT VERTICAL');
-            }
+            container.className = layoutDirection === 'row' ? 'cards-container horizontal' : 'cards-container vertical';
+            container.style.flexDirection = layoutDirection;
+            container.style.setProperty('flex-direction', layoutDirection, 'important');
+            console.log('🔴 SETUP: Layout direction:', layoutDirection, 'from settings:', settings.cardLayout);
             
             console.log('🎨 Screen:', window.innerWidth + 'x' + window.innerHeight);
-            console.log('🎨 Orientation:', isLandscape ? 'LANDSCAPE (horizontal)' : 'PORTRAIT (vertical)');
             console.log('🎨 Applied className:', container.className);
             
             currentCards.forEach((card, index) => {
@@ -2032,8 +2050,8 @@
         
         container.innerHTML = '';
         
-        // Detect orientation and FORCE layout with JavaScript
-        const isLandscape = window.innerWidth > window.innerHeight;
+        // Get layout direction from settings
+        const layoutDirection = getLayoutDirection();
         
         container.style.display = 'flex';
         container.style.justifyContent = 'center';
@@ -2041,19 +2059,10 @@
         container.style.flexWrap = 'wrap';
         container.style.gap = '2vw';
         
-        if (isLandscape) {
-            // LANDSCAPE = HORIZONTAL (side by side) - FORCE IT
-            container.className = 'cards-container horizontal';
-            container.style.flexDirection = 'row';
-            container.style.setProperty('flex-direction', 'row', 'important');
-            console.log('🔴 FORCING LANDSCAPE HORIZONTAL LAYOUT');
-        } else {
-            // PORTRAIT = VERTICAL (stacked)
-            container.className = 'cards-container vertical';
-            container.style.flexDirection = 'column';
-            container.style.setProperty('flex-direction', 'column', 'important');
-            console.log('🔴 FORCING PORTRAIT VERTICAL LAYOUT');
-        }
+        container.className = layoutDirection === 'row' ? 'cards-container horizontal' : 'cards-container vertical';
+        container.style.flexDirection = layoutDirection;
+        container.style.setProperty('flex-direction', layoutDirection, 'important');
+        console.log('🔴 RENDER PLAYING: Layout direction:', layoutDirection, 'from settings:', settings.cardLayout);
         
         // Show round indicator if limited rounds
         if (settings.maxTrials > 0) {
@@ -2438,7 +2447,7 @@
         
         // Update settings UI
         document.getElementById('numCardsInput').value = settings.numCards;
-        // layoutSelect removed - orientation is automatic
+        document.getElementById('layoutSelect').value = settings.cardLayout || 'auto';
         document.getElementById('maxTrialsInput').value = settings.maxTrials === -1 ? '' : settings.maxTrials;
         
         // Update custom programs list
@@ -2451,9 +2460,11 @@
     
     function saveSettings() {
         settings.numCards = parseInt(document.getElementById('numCardsInput').value) || 3;
-        // cardLayout removed - orientation is automatic
+        settings.cardLayout = document.getElementById('layoutSelect').value || 'auto';
         const roundsValue = document.getElementById('maxTrialsInput').value;
         settings.maxTrials = roundsValue === '' ? 5 : parseInt(roundsValue);
+        
+        console.log('💾 Settings saved:', settings);
         
         closeSettings();
         resetGame();
@@ -3400,10 +3411,10 @@
             return;
         }
         
-        const isLandscape = window.innerWidth > window.innerHeight;
-        console.log(`📱 Orientation changed: ${isLandscape ? 'LANDSCAPE' : 'PORTRAIT'} (${window.innerWidth}x${window.innerHeight})`);
+        const layoutDirection = getLayoutDirection();
+        console.log(`📱 Orientation update: layout direction = ${layoutDirection} (settings: ${settings.cardLayout})`);
         
-        // Force layout with JavaScript - CSS isn't working reliably on iPad
+        // Force layout with JavaScript
         container.style.display = 'flex';
         container.style.justifyContent = 'center';
         container.style.alignItems = 'center';
@@ -3411,19 +3422,10 @@
         container.style.gap = '2vw';
         container.style.padding = '20px';
         
-        if (isLandscape) {
-            // LANDSCAPE = HORIZONTAL (side by side) - FORCE IT
-            console.log('➡️ Setting HORIZONTAL layout (row)');
-            container.className = 'cards-container horizontal';
-            container.style.flexDirection = 'row';
-            container.style.setProperty('flex-direction', 'row', 'important');
-        } else {
-            // PORTRAIT = VERTICAL (stacked)
-            console.log('⬇️ Setting VERTICAL layout (column)');
-            container.className = 'cards-container vertical';
-            container.style.flexDirection = 'column';
-            container.style.setProperty('flex-direction', 'column', 'important');
-        }
+        container.className = layoutDirection === 'row' ? 'cards-container horizontal' : 'cards-container vertical';
+        container.style.flexDirection = layoutDirection;
+        container.style.setProperty('flex-direction', layoutDirection, 'important');
+        console.log('✅ Layout updated to:', layoutDirection);
     }
     
     // Listen for orientation changes (works on most devices)
