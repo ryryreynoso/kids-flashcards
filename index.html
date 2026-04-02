@@ -918,7 +918,7 @@
 
 <!-- Version number - bottom right -->
 <div style="position: fixed; bottom: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); right: 20px; font-size: 11px; color: rgba(255,255,255,0.6); z-index: 999; font-family: 'Fredoka', sans-serif; font-weight: 600;">
-    v3.0
+    v3.1
 </div>
 
 <!-- Removed bottom controls bar - can restore if needed:
@@ -1367,20 +1367,31 @@
     
     // Determine layout based on settings and orientation
     function getLayoutDirection() {
-        console.log('📐 getLayoutDirection called, cardLayout:', settings.cardLayout);
+        const isLandscape = window.innerWidth > window.innerHeight;
+        console.log('');
+        console.log('═══════════════════════════════════════');
+        console.log('📐 getLayoutDirection CALLED');
+        console.log('📐 settings.cardLayout =', settings.cardLayout);
+        console.log('📐 Window size:', window.innerWidth, 'x', window.innerHeight);
+        console.log('📐 isLandscape =', isLandscape);
         
+        let result;
         if (settings.cardLayout === 'horizontal') {
-            console.log('📐 Force HORIZONTAL (row) from settings');
-            return 'row';
+            console.log('📐 ✅ FORCING HORIZONTAL (row) - from settings');
+            result = 'row';
         } else if (settings.cardLayout === 'vertical') {
-            console.log('📐 Force VERTICAL (column) from settings');
-            return 'column';
+            console.log('📐 ✅ FORCING VERTICAL (column) - from settings');
+            result = 'column';
         } else {
             // Auto: based on orientation
-            const isLandscape = window.innerWidth > window.innerHeight;
-            console.log('📐 AUTO mode, orientation:', isLandscape ? 'LANDSCAPE' : 'PORTRAIT');
-            return isLandscape ? 'row' : 'column';
+            result = isLandscape ? 'row' : 'column';
+            console.log('📐 ✅ AUTO mode:', isLandscape ? 'LANDSCAPE → row' : 'PORTRAIT → column');
         }
+        
+        console.log('📐 RETURNING:', result);
+        console.log('═══════════════════════════════════════');
+        console.log('');
+        return result;
     }
     
     const successMessages = [
@@ -1902,10 +1913,20 @@
             container.className = layoutDirection === 'row' ? 'cards-container horizontal' : 'cards-container vertical';
             container.style.flexDirection = layoutDirection;
             container.style.setProperty('flex-direction', layoutDirection, 'important');
-            console.log('🔴 SETUP: Layout direction:', layoutDirection, 'from settings:', settings.cardLayout);
+            
+            console.log('🟢🟢🟢 SETUP SCREEN - APPLYING LAYOUT 🟢🟢🟢');
+            console.log('🟢 Layout direction:', layoutDirection);
+            console.log('🟢 From settings.cardLayout:', settings.cardLayout);
+            console.log('🟢 container.className:', container.className);
+            console.log('🟢 container.style.flexDirection:', container.style.flexDirection);
             
             console.log('🎨 Screen:', window.innerWidth + 'x' + window.innerHeight);
-            console.log('🎨 Applied className:', container.className);
+            
+            // Verify after setting
+            setTimeout(() => {
+                const computedStyle = window.getComputedStyle(container);
+                console.log('🟢 VERIFIED computed flex-direction:', computedStyle.flexDirection);
+            }, 100);
             
             currentCards.forEach((card, index) => {
                 console.log('Rendering card', index, ':', card);
@@ -2032,7 +2053,18 @@
         container.className = layoutDirection === 'row' ? 'cards-container horizontal' : 'cards-container vertical';
         container.style.flexDirection = layoutDirection;
         container.style.setProperty('flex-direction', layoutDirection, 'important');
-        console.log('🔴 RENDER PLAYING: Layout direction:', layoutDirection, 'from settings:', settings.cardLayout);
+        
+        console.log('🔴🔴🔴 RENDER PLAYING - APPLYING LAYOUT 🔴🔴🔴');
+        console.log('🔴 Layout direction:', layoutDirection);
+        console.log('🔴 From settings.cardLayout:', settings.cardLayout);
+        console.log('🔴 container.className:', container.className);
+        console.log('🔴 container.style.flexDirection:', container.style.flexDirection);
+        
+        // Verify after setting
+        setTimeout(() => {
+            const computedStyle = window.getComputedStyle(container);
+            console.log('🔴 VERIFIED computed flex-direction:', computedStyle.flexDirection);
+        }, 100);
         
         // Show round indicator if limited rounds
         if (settings.maxTrials > 0) {
@@ -2434,9 +2466,29 @@
         const roundsValue = document.getElementById('maxTrialsInput').value;
         settings.maxTrials = roundsValue === '' ? 5 : parseInt(roundsValue);
         
-        console.log('💾 Settings saved:', settings);
+        console.log('');
+        console.log('💾💾💾 SETTINGS SAVED 💾💾💾');
+        console.log('💾 numCards:', settings.numCards);
+        console.log('💾 cardLayout:', settings.cardLayout);
+        console.log('💾 maxTrials:', settings.maxTrials);
+        console.log('💾💾💾💾💾💾💾💾💾💾💾💾');
+        console.log('');
         
         closeSettings();
+        
+        // Force immediate layout update if we're currently playing
+        if (gameMode === 'playing' || gameMode === 'setup') {
+            console.log('🔄 Forcing layout update after settings change');
+            const container = document.getElementById('cardsContainer');
+            if (container) {
+                const layoutDirection = getLayoutDirection();
+                container.style.flexDirection = layoutDirection;
+                container.style.setProperty('flex-direction', layoutDirection, 'important');
+                container.className = layoutDirection === 'row' ? 'cards-container horizontal' : 'cards-container vertical';
+                console.log('🔄 Applied layout:', layoutDirection, 'to container');
+            }
+        }
+        
         resetGame();
     }
     
