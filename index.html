@@ -909,7 +909,14 @@
         <div class="results-emoji">🎉</div>
         <div class="results-title">Amazing Job!</div>
         <div class="results-stats" id="resultsStats"></div>
-        <button class="btn btn-primary" onclick="resetGame()" style="margin-top: 30px; font-size: 24px; padding: 20px 40px;">Play Again! 🔄</button>
+        <div style="display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; justify-content: center;">
+            <button class="btn btn-primary" onclick="restartSameProgram()" style="font-size: 20px; padding: 18px 35px; flex: 1; min-width: 200px;">
+                🔄 Play Again
+            </button>
+            <button class="btn btn-secondary" onclick="selectNewProgram()" style="font-size: 20px; padding: 18px 35px; flex: 1; min-width: 200px; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                📁 New Program
+            </button>
+        </div>
     </div>
 </div>
 
@@ -918,7 +925,7 @@
 
 <!-- Version number - bottom right -->
 <div style="position: fixed; bottom: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); right: 20px; font-size: 11px; color: rgba(255,255,255,0.6); z-index: 999; font-family: 'Fredoka', sans-serif; font-weight: 600;">
-    v3.6
+    v3.7
 </div>
 
 <!-- Removed bottom controls bar - can restore if needed:
@@ -2445,6 +2452,47 @@
         setTimeout(() => {
             createConfetti();
         }, 300);
+    }
+    
+    function restartSameProgram() {
+        console.log('🔄 Restarting same program');
+        currentTrial = 0;
+        totalMistakes = 0;
+        trialMistakes = 0;
+        
+        const resultsScreen = document.getElementById('resultsScreen');
+        const container = document.getElementById('cardsContainer');
+        
+        // Clear confetti
+        const confetti = document.querySelectorAll('.confetti');
+        confetti.forEach(c => c.remove());
+        
+        // Hide results screen
+        resultsScreen.classList.remove('show');
+        resultsScreen.style.display = 'none';
+        
+        // Clear container
+        container.innerHTML = '';
+        container.style.display = 'flex';
+        
+        // Restart the current program
+        if (currentCategory) {
+            // If we have a current category, show photo selection or setup
+            if (currentCategory.cards && currentCategory.cards.length > 0) {
+                showPhotoSelectionScreen(currentCategory.name);
+            } else {
+                selectRandomCards();
+                showSetupScreen();
+            }
+        } else {
+            // Fallback to folder selection
+            showFolderSelectionScreen();
+        }
+    }
+    
+    function selectNewProgram() {
+        console.log('📁 Selecting new program');
+        resetGame(); // This goes back to folder selection
     }
     
     function resetGame() {
