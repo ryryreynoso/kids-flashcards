@@ -51,11 +51,11 @@
         font-family: 'Fredoka', sans-serif;
         background: linear-gradient(135deg, #1e3a5f 0%, #2a5298 50%, #3d7bc7 100%);
         background-attachment: fixed;
-        height: 100vh;
+        min-height: 100vh;
         width: 100vw;
         margin: 0;
         padding: 0;
-        overflow: hidden; /* No scrolling - everything fits on screen */
+        overflow: auto; /* Allow scrolling if needed */
         position: relative;
         display: flex;
         flex-direction: column;
@@ -90,8 +90,8 @@
     .container {
         width: 100%;
         max-width: 1200px;
-        height: 100vh; /* Full height */
-        padding: 70px 15px 60px 15px; /* Smaller padding for settings icon and version */
+        min-height: 100vh; /* At least full height */
+        padding: 70px 15px 70px 15px; /* Padding for settings icon and version */
         margin: 0 auto;
         position: relative;
         z-index: 2;
@@ -100,7 +100,6 @@
         justify-content: center; /* Center content vertically */
         align-items: center;
         box-sizing: border-box;
-        overflow: hidden; /* No overflow */
     }
     
     .header {
@@ -176,13 +175,13 @@
         background: white;
         border-radius: 30px;
         padding: 15px;
-        /* Responsive sizing to fit viewport */
-        width: min(28vh, 28vw, 250px);
-        height: min(28vh, 28vw, 250px);
-        max-width: 300px;
-        max-height: 300px;
-        min-width: 120px;
-        min-height: 120px;
+        /* Dynamic sizing based on available space */
+        width: calc(min(40vh, 30vw));
+        height: calc(min(40vh, 30vw));
+        max-width: 400px;
+        max-height: 400px;
+        min-width: 150px;
+        min-height: 150px;
         flex-shrink: 0;
         cursor: pointer;
         transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -201,35 +200,29 @@
         box-sizing: border-box;
     }
     
-    /* Landscape - FIT 3 CARDS SIDE BY SIDE */
+    /* Landscape - bigger cards that take up space */
     @media (orientation: landscape) {
         .card {
-            width: min(28vh, 25vw, 200px);  /* Use vh for landscape */
-            height: min(28vh, 25vw, 200px);
-            max-width: 200px;
-            max-height: 200px;
-            min-width: 100px;
-            min-height: 100px;
+            width: calc(min(50vh, 28vw));
+            height: calc(min(50vh, 28vw));
+            max-width: 350px;
+            max-height: 350px;
         }
         
-        .cards-container,
-        .cards-container.horizontal,
-        .cards-container.vertical {
-            flex-direction: row !important;
-            gap: 1.5vw;
+        .cards-container {
+            gap: 2vw;
         }
     }
     
     /* Portrait - BIGGER cards stacked */
     @media (orientation: portrait) {
         .card {
-            width: min(50vh, 65vw, 300px);
-            height: min(50vh, 65vw, 300px);
-            max-width: 300px;
-            max-height: 300px;
+            width: calc(min(35vh, 70vw));
+            height: calc(min(35vh, 70vw));
+            max-width: 400px;
+            max-height: 400px;
         }
         
-        /* Don't force flex-direction here - JavaScript handles it */
         .cards-container {
             gap: 2vh;
         }
@@ -359,24 +352,15 @@
         }
     }
     
-    /* iPad and tablet landscape mode - FORCE horizontal layout */
-    /* iPad landscape - responsive sizing to fit 3 cards */
+    /* iPad and tablet landscape mode - bigger cards */
     @media (min-width: 768px) and (orientation: landscape) {
-        .cards-container,
-        .cards-container.vertical,
-        .cards-container.horizontal {
-            flex-direction: row !important;
-            justify-content: center !important;
-            align-items: center !important;
-        }
-        
         .card {
-            width: calc(28vw - 25px);  /* 28% each = 84% total, fits 3 easily */
-            height: calc(28vw - 25px);
-            max-width: 320px;
-            max-height: 320px;
-            min-width: 200px;
-            min-height: 200px;
+            width: calc(min(55vh, 30vw));
+            height: calc(min(55vh, 30vw));
+            max-width: 380px;
+            max-height: 380px;
+            min-width: 220px;
+            min-height: 220px;
         }
         
         .cards-container {
@@ -398,18 +382,16 @@
     
     /* Mobile landscape - smaller cards to fit */
     @media (max-width: 767px) and (orientation: landscape) {
-        .cards-container,
-        .cards-container.vertical,
-        .cards-container.horizontal {
-            flex-direction: row !important;
-            justify-content: center !important;
-            gap: 15px !important;
-            padding: 15px !important;
+        .cards-container {
+            gap: 15px;
+            padding: 15px;
         }
         
         .card {
-            width: 180px;
-            height: 180px;
+            width: calc(min(45vh, 28vw));
+            height: calc(min(45vh, 28vw));
+            max-width: 220px;
+            max-height: 220px;
             padding: 10px;
         }
         
@@ -446,18 +428,6 @@
         }
     }
     
-    /* ULTIMATE CATCH-ALL: Force landscape to ALWAYS be horizontal */
-    @media (orientation: landscape) {
-        #cardsContainer,
-        #cardsContainer.cards-container,
-        #cardsContainer.horizontal,
-        #cardsContainer.vertical,
-        .cards-container,
-        .cards-container.horizontal,
-        .cards-container.vertical {
-            flex-direction: row !important;
-        }
-    }
     
     .card:nth-child(1) { animation-delay: 0.1s; }
     .card:nth-child(2) { animation-delay: 0.2s; }
@@ -948,7 +918,7 @@
 
 <!-- Version number - bottom right -->
 <div style="position: fixed; bottom: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); right: 20px; font-size: 11px; color: rgba(255,255,255,0.6); z-index: 999; font-family: 'Fredoka', sans-serif; font-weight: 600;">
-    v2.9
+    v3.0
 </div>
 
 <!-- Removed bottom controls bar - can restore if needed:
