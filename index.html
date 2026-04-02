@@ -918,7 +918,7 @@
 
 <!-- Version number - bottom right -->
 <div style="position: fixed; bottom: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); right: 20px; font-size: 11px; color: rgba(255,255,255,0.6); z-index: 999; font-family: 'Fredoka', sans-serif; font-weight: 600;">
-    v3.1
+    v3.2
 </div>
 
 <!-- Removed bottom controls bar - can restore if needed:
@@ -1913,12 +1913,17 @@
             container.className = layoutDirection === 'row' ? 'cards-container horizontal' : 'cards-container vertical';
             container.style.flexDirection = layoutDirection;
             container.style.setProperty('flex-direction', layoutDirection, 'important');
+            // Also set via setAttribute to be extra sure
+            const currentStyle = container.getAttribute('style') || '';
+            const newStyle = currentStyle.split(';').filter(s => !s.includes('flex-direction')).join(';');
+            container.setAttribute('style', newStyle + `; flex-direction: ${layoutDirection} !important;`);
             
             console.log('🟢🟢🟢 SETUP SCREEN - APPLYING LAYOUT 🟢🟢🟢');
             console.log('🟢 Layout direction:', layoutDirection);
             console.log('🟢 From settings.cardLayout:', settings.cardLayout);
             console.log('🟢 container.className:', container.className);
             console.log('🟢 container.style.flexDirection:', container.style.flexDirection);
+            console.log('🟢 container.getAttribute("style"):', container.getAttribute('style'));
             
             console.log('🎨 Screen:', window.innerWidth + 'x' + window.innerHeight);
             
@@ -1926,6 +1931,7 @@
             setTimeout(() => {
                 const computedStyle = window.getComputedStyle(container);
                 console.log('🟢 VERIFIED computed flex-direction:', computedStyle.flexDirection);
+                console.log('🟢 VERIFIED computed display:', computedStyle.display);
             }, 100);
             
             currentCards.forEach((card, index) => {
@@ -2053,17 +2059,23 @@
         container.className = layoutDirection === 'row' ? 'cards-container horizontal' : 'cards-container vertical';
         container.style.flexDirection = layoutDirection;
         container.style.setProperty('flex-direction', layoutDirection, 'important');
+        // Also set via setAttribute to be extra sure
+        const currentStyle = container.getAttribute('style') || '';
+        const newStyle = currentStyle.split(';').filter(s => !s.includes('flex-direction')).join(';');
+        container.setAttribute('style', newStyle + `; flex-direction: ${layoutDirection} !important;`);
         
         console.log('🔴🔴🔴 RENDER PLAYING - APPLYING LAYOUT 🔴🔴🔴');
         console.log('🔴 Layout direction:', layoutDirection);
         console.log('🔴 From settings.cardLayout:', settings.cardLayout);
         console.log('🔴 container.className:', container.className);
         console.log('🔴 container.style.flexDirection:', container.style.flexDirection);
+        console.log('🔴 container.getAttribute("style"):', container.getAttribute('style'));
         
         // Verify after setting
         setTimeout(() => {
             const computedStyle = window.getComputedStyle(container);
             console.log('🔴 VERIFIED computed flex-direction:', computedStyle.flexDirection);
+            console.log('🔴 VERIFIED computed display:', computedStyle.display);
         }, 100);
         
         // Show round indicator if limited rounds
@@ -2485,7 +2497,12 @@
                 container.style.flexDirection = layoutDirection;
                 container.style.setProperty('flex-direction', layoutDirection, 'important');
                 container.className = layoutDirection === 'row' ? 'cards-container horizontal' : 'cards-container vertical';
+                // Also set via setAttribute
+                const currentStyle = container.getAttribute('style') || '';
+                const newStyle = currentStyle.split(';').filter(s => !s.includes('flex-direction')).join(';');
+                container.setAttribute('style', newStyle + `; flex-direction: ${layoutDirection} !important;`);
                 console.log('🔄 Applied layout:', layoutDirection, 'to container');
+                console.log('🔄 Style attribute:', container.getAttribute('style'));
             }
         }
         
@@ -3447,7 +3464,13 @@
         container.className = layoutDirection === 'row' ? 'cards-container horizontal' : 'cards-container vertical';
         container.style.flexDirection = layoutDirection;
         container.style.setProperty('flex-direction', layoutDirection, 'important');
+        // Also set via setAttribute to be extra sure
+        const currentStyle = container.getAttribute('style') || '';
+        const newStyle = currentStyle.split(';').filter(s => !s.includes('flex-direction')).join(';');
+        container.setAttribute('style', newStyle + `; flex-direction: ${layoutDirection} !important; display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 2vw; padding: 20px;`);
+        
         console.log('✅ Layout updated to:', layoutDirection);
+        console.log('✅ container.getAttribute("style"):', container.getAttribute('style'));
     }
     
     // Listen for orientation changes (works on most devices)
