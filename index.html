@@ -1176,16 +1176,16 @@
     let trialMistakes = 0;
     let showingSettings = false;
     
-    // Firebase Configuration
+    // Do not commit Firebase credentials. Configure private deployments outside this file.
     const firebaseConfig = {
-        apiKey: "AIzaSyCyhjX0epecXlUgF0_0RC1mu0Z0G_WZPFs",
-        authDomain: "kids-flashcards-945a2.firebaseapp.com",
-        databaseURL: "https://kids-flashcards-945a2-default-rtdb.firebaseio.com",
-        projectId: "kids-flashcards-945a2",
-        storageBucket: "kids-flashcards-945a2.firebasestorage.app",
-        messagingSenderId: "995243292324",
-        appId: "1:995243292324:web:d52f006f7fafd15d49d831",
-        measurementId: "G-KB437CB3M2"
+        apiKey: "",
+        authDomain: "",
+        databaseURL: "",
+        projectId: "",
+        storageBucket: "",
+        messagingSenderId: "",
+        appId: "",
+        measurementId: ""
     };
     
     // Initialize Firebase
@@ -1196,6 +1196,13 @@
     
     // Wait for Firebase SDK to load
     function initFirebase() {
+        if (!firebaseConfig.apiKey || !firebaseConfig.databaseURL) {
+            console.warn('Firebase is not configured; using local browser storage only.');
+            isFirebaseReady = false;
+            loadProgramsFromStorage();
+            return;
+        }
+
         initAttempts++;
         
         if (typeof firebase === 'undefined') {
@@ -1236,8 +1243,9 @@
     // Load programs from Firebase on startup
     function loadProgramsFromStorage() {
         if (!isFirebaseReady || !database) {
-            console.error('❌ Firebase not ready');
-            setTimeout(loadProgramsFromStorage, 500); // Retry
+            console.warn('Firebase not ready; using local browser storage.');
+            updateFoldersAndCategoriesList();
+            showFolderSelectionScreen();
             return;
         }
         
@@ -1276,9 +1284,14 @@
     // Save programs to Firebase (shared across all users)
     async function saveProgramsToStorage() {
         if (!isFirebaseReady || !database) {
-            console.error('❌ Firebase not initialized');
-            alert('Firebase is not ready. Please wait and try again.');
-            return false;
+            try {
+                localStorage.setItem('backup-categories', JSON.stringify(customCategories));
+                localStorage.setItem('backup-folders', JSON.stringify(folders));
+                return true;
+            } catch (error) {
+                console.error('Local save failed:', error);
+                return false;
+            }
         }
         
         try {
